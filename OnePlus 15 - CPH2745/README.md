@@ -10,13 +10,17 @@
 
 ## Installed on your OnePlus 15
 
-**Last update check — November 21, 2026 at 13:56 Bangkok time (UTC+7).** All **7 of 7 components** matched the latest official release on their installed channel. OnePlus 15 CPH2745, Android 17 build `CPH2745_17.0.0.102(EX01)`, slot B. KernelSU root is working, SELinux is Enforcing, all four KernelSU modules are enabled, and Tailscale is awaiting sign-in. [Live checks and release comparisons](02-updates/current/verification.json)
+The phone boots Android 17, `CPH2745_17.0.0.102(EX01)`, on slot B with the official C.75 `init_boot`. Shell has no `su` command and KernelSU is absent from the loaded modules. The bootloader is unlocked and Verified Boot is orange. User data and the prior app installation have not been erased. [Restore measurements and current state](02-updates/current/verification.json)
+
+### Recorded rooted components
+
+The table records the last working rooted setup on November 21, 2026 at 13:56 Bangkok time. All seven then matched their selected release channels. Use these versions and tagged sources to reproduce that setup after the factory handoff.
 
 **Vector is the only component on canary** because PixelMask 1.2.0 requires its Android 17 compatibility fix. The other six components use stable releases. [Compatibility notes](https://github.com/kinginu/PixelMask/releases/tag/18-1.2.0)
 
 For a fresh download, use **Latest on this channel**. **Where we installed it from** identifies the exact build verified on the phone.
 
-| Component or module | Installed channel | Version on this phone | Where we installed it from | Latest on this channel |
+| Component or module | Installed channel | Version in rooted setup | Where we installed it from | Latest on this channel |
 |---|---|---|---|---|
 | KernelSU root and manager | Official stable, LKM mode | **3.3.1**, build **32680** | [tiann/KernelSU v3.3.1](https://github.com/tiann/KernelSU/releases/tag/v3.3.1). The official manager patched the phone’s matching stock `init_boot` image. | [Stable manager APK](https://github.com/tiann/KernelSU/releases/latest) · choose the release APK |
 | bindhosts | Stable | **2.1.5**, code **215** | `bindhosts.zip` from [bindhosts/bindhosts v2.1.5](https://github.com/bindhosts/bindhosts/releases/tag/v2.1.5) | [Download stable ZIP](https://github.com/bindhosts/bindhosts/releases/latest/download/bindhosts.zip) |

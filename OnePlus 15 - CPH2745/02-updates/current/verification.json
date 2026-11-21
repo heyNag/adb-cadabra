@@ -6,166 +6,175 @@
     "ro.build.fingerprint": "OnePlus/CPH2745IN/OP611FL1:17/CP2A.260605.016/B.R4T3.55357f5-2eb9868-2eda512:user/release-keys",
     "ro.boot.slot_suffix": "_b",
     "ro.boot.flash.locked": "0",
-    "sys.boot_completed": "1"
+    "sys.boot_completed": "1",
+    "ro.boot.vbmeta.device_state": "unlocked",
+    "ro.boot.verifiedbootstate": "orange",
+    "ro.boot.veritymode": "enforcing"
   },
   "kernel": "6.12.69-android16-6-g242e1a07f878-ab15865446-4k",
-  "root": "uid=0(root) gid=0(root) groups=0(root) context=u:r:ksu:s0",
   "selinux": "Enforcing",
-  "kernelsu_lkm_loaded": true,
-  "boot_id": "80f5be89-2571-4fd8-9ed8-a33b2f7fc9fb",
-  "android_packages": {
-    "me.weishu.kernelsu": {
-      "name": "v3.3.1",
-      "code": 32680
+  "root": "Shell UID 2000. su -c id returned 127, inaccessible or not found.",
+  "kernelsu_lkm_loaded": false,
+  "boot_id": "fed9beb2-558c-4ce5-9e28-8057aa83abdd",
+  "checked_at": "2026-11-21T16:36:35+07:00",
+  "rooted_rebuild_baseline": {
+    "root": "uid=0(root) gid=0(root) groups=0(root) context=u:r:ksu:s0",
+    "kernelsu_lkm_loaded": true,
+    "boot_id": "80f5be89-2571-4fd8-9ed8-a33b2f7fc9fb",
+    "android_packages": {
+      "me.weishu.kernelsu": {
+        "name": "v3.3.1",
+        "code": 32680
+      },
+      "com.kinginu.pixelmask": {
+        "name": "1.2.0",
+        "code": 18
+      }
     },
-    "com.kinginu.pixelmask": {
-      "name": "1.2.0",
-      "code": 18
-    }
-  },
-  "modules": [
-    {
-      "id": "bindhosts",
-      "version": "v2.1.5",
-      "versionCode": "215",
-      "enabled": "true",
-      "update": "false",
-      "remove": "false"
+    "modules": [
+      {
+        "id": "bindhosts",
+        "version": "v2.1.5",
+        "versionCode": "215",
+        "enabled": "true",
+        "update": "false",
+        "remove": "false"
+      },
+      {
+        "id": "kernelsu-tailscaled",
+        "version": "2.0.5",
+        "versionCode": "20000017",
+        "enabled": "true",
+        "update": "false",
+        "remove": "false"
+      },
+      {
+        "id": "zygisksu",
+        "version": "1.5.3 (880-22a1bf5-release)",
+        "versionCode": "880",
+        "enabled": "true",
+        "update": "false",
+        "remove": "false"
+      },
+      {
+        "id": "zygisk_vector",
+        "version": "v2.2 (3119-6f6b976e-JingMatrix-Vector)",
+        "versionCode": "3119",
+        "enabled": "true",
+        "update": "false",
+        "remove": "false"
+      }
+    ],
+    "vector": {
+      "Framework Version": "2.2",
+      "Version Code": 3119,
+      "API Version": 102,
+      "Enabled Modules": 1,
+      "Status Notification": true
     },
-    {
-      "id": "kernelsu-tailscaled",
-      "version": "2.0.5",
-      "versionCode": "20000017",
-      "enabled": "true",
-      "update": "false",
-      "remove": "false"
+    "vector_addons": [
+      {
+        "PACKAGE": "com.kinginu.pixelmask",
+        "UID": 10399,
+        "STATUS": "enabled"
+      }
+    ],
+    "vector_scope": [
+      {
+        "APP_PACKAGE": "com.google.android.apps.photos",
+        "USER_ID": 0
+      },
+      {
+        "APP_PACKAGE": "com.kinginu.pixelmask",
+        "USER_ID": 0
+      }
+    ],
+    "zygisk_next": {
+      "version": "1.5.3-880-22a1bf5-release",
+      "root_status": "✅KernelSU (32680)",
+      "inject_state": "1",
+      "modules64": "1,zygisk_vector",
+      "modules_with_issue": "0"
     },
-    {
-      "id": "zygisksu",
-      "version": "1.5.3 (880-22a1bf5-release)",
-      "versionCode": "880",
-      "enabled": "true",
-      "update": "false",
-      "remove": "false"
-    },
-    {
-      "id": "zygisk_vector",
-      "version": "v2.2 (3119-6f6b976e-JingMatrix-Vector)",
-      "versionCode": "3119",
-      "enabled": "true",
-      "update": "false",
-      "remove": "false"
-    }
-  ],
-  "vector": {
-    "Framework Version": "2.2",
-    "Version Code": 3119,
-    "API Version": 102,
-    "Enabled Modules": 1,
-    "Status Notification": true
-  },
-  "vector_addons": [
-    {
-      "PACKAGE": "com.kinginu.pixelmask",
-      "UID": 10399,
-      "STATUS": "enabled"
-    }
-  ],
-  "vector_scope": [
-    {
-      "APP_PACKAGE": "com.google.android.apps.photos",
-      "USER_ID": 0
-    },
-    {
-      "APP_PACKAGE": "com.kinginu.pixelmask",
-      "USER_ID": 0
-    }
-  ],
-  "zygisk_next": {
-    "version": "1.5.3-880-22a1bf5-release",
-    "root_status": "✅KernelSU (32680)",
-    "inject_state": "1",
-    "modules64": "1,zygisk_vector",
-    "modules_with_issue": "0"
-  },
-  "tailscale": {
-    "module": "2.0.5",
-    "mode": "native",
-    "enabled": true,
-    "lifecycle": "degraded",
-    "engine": "1.104.7",
-    "daemon": "1.104.7-tfb3b9b296-g0651cc45e",
-    "backend": "NeedsLogin",
-    "components": {
-      "supervisor": "running",
-      "daemon": "running",
-      "dataPlane": "unknown",
-      "web": "running"
-    }
-  },
-  "bindhosts": {
-    "doubleclick.net": "PING doubleclick.net (127.0.0.1) 56(84) bytes of data.",
-    "example.com": "PING example.com (104.20.23.154) 56(84) bytes of data."
-  },
-  "checked_at": "2026-11-21T13:56:08+07:00",
-  "channel_checks": {
-    "KernelSU": {
-      "channel": "stable",
-      "upstream_release": "v3.3.1",
-      "source": "https://github.com/tiann/KernelSU/releases/tag/v3.3.1",
-      "installed": "v3.3.1",
-      "matches_installed_channel": true
+    "tailscale": {
+      "module": "2.0.5",
+      "mode": "native",
+      "enabled": true,
+      "lifecycle": "degraded",
+      "engine": "1.104.7",
+      "daemon": "1.104.7-tfb3b9b296-g0651cc45e",
+      "backend": "NeedsLogin",
+      "components": {
+        "supervisor": "running",
+        "daemon": "running",
+        "dataPlane": "unknown",
+        "web": "running"
+      }
     },
     "bindhosts": {
-      "channel": "stable",
-      "upstream_release": "v2.1.5",
-      "source": "https://github.com/bindhosts/bindhosts/releases/tag/v2.1.5",
-      "installed": "v2.1.5",
-      "matches_installed_channel": true
+      "doubleclick.net": "PING doubleclick.net (127.0.0.1) 56(84) bytes of data.",
+      "example.com": "PING example.com (104.20.23.154) 56(84) bytes of data."
     },
-    "KernelSU-Tailscaled": {
-      "channel": "stable",
-      "upstream_release": "v2.0.5",
-      "source": "https://github.com/WayneShao/KernelSU-Tailscaled/releases/tag/v2.0.5",
-      "installed": "v2.0.5",
-      "matches_installed_channel": true
+    "checked_at": "2026-11-21T13:56:08+07:00",
+    "channel_checks": {
+      "KernelSU": {
+        "channel": "stable",
+        "upstream_release": "v3.3.1",
+        "source": "https://github.com/tiann/KernelSU/releases/tag/v3.3.1",
+        "installed": "v3.3.1",
+        "matches_installed_channel": true
+      },
+      "bindhosts": {
+        "channel": "stable",
+        "upstream_release": "v2.1.5",
+        "source": "https://github.com/bindhosts/bindhosts/releases/tag/v2.1.5",
+        "installed": "v2.1.5",
+        "matches_installed_channel": true
+      },
+      "KernelSU-Tailscaled": {
+        "channel": "stable",
+        "upstream_release": "v2.0.5",
+        "source": "https://github.com/WayneShao/KernelSU-Tailscaled/releases/tag/v2.0.5",
+        "installed": "v2.0.5",
+        "matches_installed_channel": true
+      },
+      "Zygisk Next": {
+        "channel": "stable",
+        "upstream_release": "v1.5.3",
+        "source": "https://github.com/Dr-TSNG/ZygiskNext/releases/tag/v1.5.3",
+        "installed": "v1.5.3",
+        "matches_installed_channel": true
+      },
+      "Vector": {
+        "channel": "canary",
+        "upstream_release": "canary-3119",
+        "source": "https://github.com/JingMatrix/Vector/releases/tag/canary-3119",
+        "installed": "canary-3119",
+        "matches_installed_channel": true
+      },
+      "PixelMask": {
+        "channel": "stable",
+        "upstream_release": "18-1.2.0",
+        "source": "https://github.com/kinginu/PixelMask/releases/tag/18-1.2.0",
+        "installed": "18-1.2.0",
+        "matches_installed_channel": true
+      },
+      "Tailscale engine": {
+        "channel": "stable",
+        "upstream_release": "1.104.7",
+        "source": "https://pkgs.tailscale.com/stable/tailscale_1.104.7_arm64.tgz",
+        "installed": "1.104.7",
+        "matches_installed_channel": true
+      }
     },
-    "Zygisk Next": {
-      "channel": "stable",
-      "upstream_release": "v1.5.3",
-      "source": "https://github.com/Dr-TSNG/ZygiskNext/releases/tag/v1.5.3",
-      "installed": "v1.5.3",
-      "matches_installed_channel": true
-    },
-    "Vector": {
-      "channel": "canary",
-      "upstream_release": "canary-3119",
-      "source": "https://github.com/JingMatrix/Vector/releases/tag/canary-3119",
-      "installed": "canary-3119",
-      "matches_installed_channel": true
-    },
-    "PixelMask": {
-      "channel": "stable",
-      "upstream_release": "18-1.2.0",
-      "source": "https://github.com/kinginu/PixelMask/releases/tag/18-1.2.0",
-      "installed": "18-1.2.0",
-      "matches_installed_channel": true
-    },
-    "Tailscale engine": {
-      "channel": "stable",
-      "upstream_release": "1.104.7",
-      "source": "https://pkgs.tailscale.com/stable/tailscale_1.104.7_arm64.tgz",
-      "installed": "1.104.7",
-      "matches_installed_channel": true
-    }
+    "check_scope": "PixelMask was verified through its package and Vector configuration. Tailscale sign-in and peer connectivity are deferred."
   },
-  "check_scope": "PixelMask was verified through its package and Vector configuration. Tailscale sign-in and peer connectivity are deferred.",
   "factory_restore_check": {
-    "checked_at": "2026-11-21T15:57:35+07:00",
+    "checked_at": "2026-11-21T16:36:35+07:00",
     "active_slot": "b",
     "flash_locked": false,
     "verified_boot": "orange",
-    "active_init_boot_matches": "recorded KernelSU patch",
+    "active_init_boot_matches": "C.75 stock image sent and written OKAY in bootloader fastboot. Raw post-flash readback unavailable in unrooted Android.",
     "current_build_stock_init_boot_recovered_from_official_ota": true,
     "latest_india_full_ota": {
       "display_build": "CPH2745_17.0.1.201(EX01)",
@@ -181,22 +190,76 @@
       "requires_source_partition_data": false
     },
     "phone_updater_offered": "CPH2745_17.0.1.201, 2.17 GB",
-    "restore_progress": "Read-only preflight complete. OnePlus India publishes OTA instructions and a service route. A factory restore and relock procedure approved for this model, rollback level and boot state remains unverified. The phone is still rooted on slot B. Firmware write, erase, relock and welcome-screen verification are pending.",
-    "active_init_boot_sha256": "e0012d4c9765dcbf2275070dd807ee4c1b691543422b9489effb0ae60aeb0a73",
-    "active_stock_image_checks": {
-      "build": "CPH2745_17.0.0.102(EX01)",
-      "boot_b": {
-        "bytes_checked": 100663296,
-        "sha256": "03fb9cfa5edfadd5044b442d68ca906225f2733f2ce71045248843bb15943fdc",
-        "matches_stock": true
+    "restore_progress": "Stock C.75 init_boot_b written. Android boot and absence of KernelSU runtime verified. User data remains. C.80 installation, locked green boot, wipe and welcome-screen verification are pending.",
+    "before_unroot": {
+      "partition_comparison": {
+        "build": "CPH2745_17.0.0.102(EX01)",
+        "boot_b": {
+          "bytes_checked": 100663296,
+          "sha256": "03fb9cfa5edfadd5044b442d68ca906225f2733f2ce71045248843bb15943fdc",
+          "matches_stock": true
+        },
+        "vbmeta_b": {
+          "physical_partition_bytes": 65536,
+          "ota_image_bytes_checked_from_offset_zero": 12288,
+          "sha256": "5338ad8b14d98c41e0be8f10a8ad4fc48218dc61f3fcba362fc2f2167c171cc9",
+          "matches_stock": true
+        },
+        "signed_target_partitions": 65,
+        "read_successfully": 65,
+        "matched_before_unroot": 63,
+        "image_length_bytes_compared": 12465209344,
+        "boot_chain_matching_stock": [
+          "boot",
+          "vendor_boot",
+          "recovery",
+          "dtbo",
+          "vbmeta",
+          "vbmeta_system",
+          "vbmeta_vendor"
+        ],
+        "recovery_b_sha256": "74ccbb2e598ba7135c85a3feace4e8403132a388ff0470e01047d7a9ee98f719",
+        "differences_before_unroot": {
+          "init_boot_b": "Matched the recorded KernelSU patch.",
+          "splash_b": {
+            "bytes_compared": 15507456,
+            "observed_sha256": "b30e8403705662848f7d2bc5c3595367fac6613b6b797a7104fa61e99e2628e6",
+            "c75_and_c80_stock_sha256": "4d9018f01b34a72dca6b33d7b6f94721d0d5ff3e2b6a93cc169fc942ff7970f3",
+            "difference": "Offsets 0–4 only. Device 44 44 50 48 01, official image 00 00 00 00 00. Meaning unverified. No splash descriptor in vbmeta, vbmeta_system or vbmeta_vendor. No splash write."
+          }
+        }
       },
-      "vbmeta_b": {
-        "physical_partition_bytes": 65536,
-        "ota_image_bytes_checked_from_offset_zero": 12288,
-        "sha256": "5338ad8b14d98c41e0be8f10a8ad4fc48218dc61f3fcba362fc2f2167c171cc9",
-        "matches_stock": true
+      "slot_state": "Boot Control HAL current and next B, B bootable and successful, A unbootable. On A, boot and vbmeta_system matched C.80. The six other checked boot-chain images matched neither C.75 nor C.80. Installed build on A undetermined.",
+      "update_state": "update_engine IDLE (0) at 0 progress. Boot Control HAL merge status NONE. libsnapshot metadata still recorded Initiated for source C.75 with 15 inactive-slot snapshot records.",
+      "metadata_signature": "C.75 and C.80 payload metadata signatures verified against the phone’s trusted local_OTA.x509.pem.",
+      "patched_recovery_copy": {
+        "filename": "kernelsu-init_boot_b.img",
+        "bytes": 8388608,
+        "sha256": "e0012d4c9765dcbf2275070dd807ee4c1b691543422b9489effb0ae60aeb0a73",
+        "storage": "Private temporary Mac run. Exact active slot B readback verified after saving."
+      }
+    },
+    "c75_stock_boot_test": {
+      "stock_init_boot_bytes": 8388608,
+      "stock_init_boot_sha256": "8910c3ce57893273120434866ef29a436771ae931290e83156807153c8936002",
+      "bootloader_checks": {
+        "product": "canoe",
+        "current-slot": "b",
+        "unlocked": "yes",
+        "is-userspace": "no",
+        "partition-size:init_boot_b": "0x800000"
       },
-      "slot_a": "Installed build unverified. Its init_boot digest differs from the C.75 reference."
+      "partition_written": "init_boot_b",
+      "fastboot_send_write_reboot": "all OKAY",
+      "same_build_fingerprint": true,
+      "slot": "b",
+      "boot_completed": true,
+      "boot_animation": "stopped",
+      "verified_boot": "orange",
+      "vbmeta_digest": "4f37f0cf8d94f052f2096c45c3e08c03e12b010d1c1ca7918b7a1bd45b4ef1b9",
+      "kernelsu_module_in_proc_modules": false,
+      "su_exit_code": 127,
+      "user_data_erased": false
     }
   }
 }

@@ -1,6 +1,6 @@
 # Clean install or redo a rooted OnePlus 15
 
-On a fresh phone running official, unrooted firmware, start at [Set up a fresh Mac and phone](#0-set-up-a-fresh-mac-and-phone). To rebuild this already-rooted test phone with empty user data, start below. Both paths finish with working KernelSU and freshly installed modules.
+On a fresh phone running official, unrooted firmware, start at [Set up a fresh Mac and phone](#0-set-up-a-fresh-mac-and-phone). For a phone that still has active KernelSU, the redo procedure below starts with a wipe. For the later factory-to-root rebuild, use the original component versions, channels and tagged sources in the [recorded rooted setup](../README.md#recorded-rooted-components) and restore the module settings in section 4.
 
 ## Redo on an already-rooted phone
 
