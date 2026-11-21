@@ -1,6 +1,6 @@
 # Update installed OnePlus 15 components
 
-Update each component already on the phone to the latest compatible release on its installed channel. The live inventory determines the scope. Skip absent components. If the phone is stock, report that the rooted setup is absent and finish the update check. To install for the first time on a clean slate, use the [clean-slate installation guide](../01-root-and-reinstall/README.md).
+Update each component already on the phone to the latest compatible release on its installed channel. The live inventory determines the scope. Skip absent components. On a stock phone, skip the KernelSU checks. WiFiAnalyzer can be inventoried and updated as a regular Android app. To install for the first time on a clean slate, use the [clean-slate installation guide](../01-root-and-reinstall/README.md).
 
 Use the top-level `device` and `current_state` fields for the present phone. `rooted_rebuild_baseline` and `factory_restore_check` record earlier states. Choose **Latest on this channel** for each component present in the live inventory. For a version check, keep Google Photos closed. To verify PixelMask inside Photos after an update, use the [runtime check](../01-root-and-reinstall/README.md#restore-and-verify-the-pixelmask-scope) with the existing scope. Preserve the current backup preference, Tailscale sign-in and settings. [Current verification](current/verification.json) · [Component channels and official downloads](../README.md#verified-setup-on-the-reference-phone)
 
@@ -31,6 +31,7 @@ phone shell cat /proc/sys/kernel/random/boot_id
 phone shell getenforce
 phone shell pm path me.weishu.kernelsu
 phone shell pm path com.kinginu.pixelmask
+phone shell pm path --user 0 com.vrem.wifianalyzer
 ```
 
 For an established KernelSU setup, confirm **Working / LKM** and check the already-authorized Shell root grant. A denied Shell grant alone leaves root status uncertain. Once root is confirmed, inventory KernelSU modules and their enabled or pending-removal states.
@@ -48,6 +49,7 @@ Run the following checks only for components present in that inventory or instal
 ```sh
 phone shell dumpsys package me.weishu.kernelsu | grep -E 'version(Name|Code)='
 phone shell dumpsys package com.kinginu.pixelmask | grep -E 'version(Name|Code)='
+phone shell dumpsys package com.vrem.wifianalyzer | grep -E 'version(Name|Code)='
 vector status
 vector modules ls
 vector scope ls com.kinginu.pixelmask
@@ -61,7 +63,7 @@ result["prefs"] = {k: (d.get("prefs") or {}).get(k) for k in ("CorpDNS", "RouteA
 print(json.dumps(result))'
 ```
 
-Keep the firmware, active slot, boot ID, enabled modules and applicable configuration readbacks for comparison after the update.
+Keep the firmware, active slot, boot ID, enabled modules and applicable configuration readbacks for comparison after the update. For an installed Wi-Fi tool, capture its [pre-update version and settings](#update-the-wi-fi-tools) before applying the new release.
 
 ## 2. Compare the installed channels
 
@@ -74,6 +76,8 @@ Keep the firmware, active slot, boot ID, enabled modules and applicable configur
 | Zygisk Next | Open [Dr-TSNG’s latest stable release](https://github.com/Dr-TSNG/ZygiskNext/releases/latest) and compare the ZIP’s numeric build. |
 | Vector | Open the [canary prerelease list](https://github.com/JingMatrix/Vector/releases?q=prerelease%3Atrue%20canary). Choose the published `canary-N` with the highest numeric `N`, then select its **Release ZIP**. Compare that build with the running Vector CLI status. |
 | PixelMask | Open the [latest stable release](https://github.com/kinginu/PixelMask/releases/latest). Compare the APK version code and its required Vector build for Android 17. |
+| WiFiAnalyzer | Compare its version on its original channel. [VREM stable APK](https://github.com/VREMSoftwareDevelopment/WiFiAnalyzer/releases/latest) · [Google Play](https://play.google.com/store/apps/details?id=com.vrem.wifianalyzer) · [F-Droid](https://f-droid.org/en/packages/com.vrem.wifianalyzer/) |
+| ColorOS Wi-Fi Sense | Compare the installed `coloros_wifi_sense` version code with the [author’s latest stable ZIP](https://github.com/mazemingw/coloros-wifi-sense/releases/latest). |
 
 Check Android, kernel, ABI and dependency requirements. A version check needs only the release metadata and phone inventory. Record each result and check time in the root inventory and current verification, including any feed or live check that was unavailable. Finish a check-only request after reporting the live counts of installed components checked, already current, and eligible for update. Record any incompatible newer release or unresolved check separately. For an update request, proceed only with installed components that have a newer compatible release on their existing channel.
 
@@ -89,7 +93,7 @@ mkdir -p "$RUN_BASE" &&
   printf '%s\n' "$UPDATE_DIR"
 ```
 
-Keep `UPDATE_DIR` for this update’s installers, settings exports and rollback files. Compare the downloaded size and local SHA-256 (`shasum -a 256 FILE`) with the published metadata. Verify any upstream signed checksum. For a ZIP, use `unzip -tq FILE`, inspect the installer, read its ID and version code with `unzip -p FILE module.prop`, and validate its bundled checksum manifest when present. For APKs, use the following identity check for each update. Set `PACKAGE` to the intended installed package (`me.weishu.kernelsu` or `com.kinginu.pixelmask`) and `APK` to the absolute path of the checksum-verified candidate. The installed base APK supplies the signing certificate for comparison.
+Keep `UPDATE_DIR` for this update’s installers, settings exports and rollback files. Compare the downloaded size and local SHA-256 (`shasum -a 256 FILE`) with the published metadata. Verify any upstream signed checksum. For a ZIP, use `unzip -tq FILE`, inspect the installer, read its ID and version code with `unzip -p FILE module.prop`, and validate its bundled checksum manifest when present. For APKs, use the following identity check for each update. Set `PACKAGE` to the intended installed package (`me.weishu.kernelsu`, `com.kinginu.pixelmask` or `com.vrem.wifianalyzer`) and `APK` to the absolute path of the checksum-verified candidate. The installed base APK supplies the signing certificate for comparison.
 
 ```sh
 set -o pipefail
@@ -159,6 +163,11 @@ When the hashes match, run `rootcmd "/data/adb/ksud module install $PHONE_ZIP"` 
 
 - **Activation.** Reboot only when the selected update needs boot-time activation. For a required reboot, use `phone reboot`. Check `adb devices -l` and `phone shell getprop sys.boot_completed` every five seconds for up to three minutes. Require a new boot ID, boot completion `1`, root and Enforcing SELinux. For a service-only update, check the restarted service directly.
 - **Read back.** Repeat the checks from step 1 for the components that were present. For the installed loader and its dependents, check loader status with `rootcmd '/data/adb/modules/zygisksu/bin/zygiskd status'`, Vector’s running build, and PixelMask’s enablement and scope. For bindhosts, compare the addresses printed by `phone shell ping -c 1 -W 2 doubleclick.net` and the same command for `example.com`. The blocked domain should resolve to the configured sink and the control to a public address. Confirm Tailscale’s running engine, backend and preferences against the baseline. If installation times out, inspect staged and running versions before retrying.
+
+### Update the Wi-Fi tools
+
+- **WiFiAnalyzer.** Retain the app’s install channel. For a VREM GitHub installation set `PACKAGE=com.vrem.wifianalyzer` and `APK` to the verified new file. In section 3 require the new APK’s signer to match **both** the installed base APK and VREM’s published **GitHub** signer before `phone install -r "$APK"`. For a Play or F-Droid installation, update through the same store. Preserve the existing Android permissions and filters, read back the new version and confirm a fresh scan in **Time Graph**. A WiFiAnalyzer-only update needs no reboot or root grant. [VREM signing policy](https://github.com/VREMSoftwareDevelopment/WiFiAnalyzer/blob/main/SECURITY.md) · [App setup and live scan](../01-root-and-reinstall/README.md#install-wifianalyzer)
+- **ColorOS Wi-Fi Sense.** On the Indian CPH2745 running official KernelSU, note the installed version and run the daemon check linked below before updating. Record the installed Fluid Cloud variant, its current notification setting, threshold, countdown, recovery margin and optional switches privately. Verify the new ZIP’s digest, module ID and version code. Stage it as in section 4 and select the same variant at the installer’s volume-key prompt. After installer success, reboot, verify the new module version, and repeat the daemon and WebUI checks. Restore the previous WebUI choices if the installer reset them. Keep SSIDs and BSSIDs out of shared records. [Activation and fresh daemon response](../01-root-and-reinstall/README.md#activate-coloros-wi-fi-sense)
 
 ### Recover a failed update
 

@@ -33,6 +33,10 @@
       "com.kinginu.pixelmask": {
         "version": "1.2.0",
         "versionCode": 18
+      },
+      "com.vrem.wifianalyzer": {
+        "version": "3.3.1",
+        "versionCode": 72
       }
     },
     "modules": [
@@ -64,6 +68,14 @@
         "id": "zygisk_vector",
         "version": "v2.2 (3119-6f6b976e-JingMatrix-Vector)",
         "versionCode": "3119",
+        "enabled": "true",
+        "update": "false",
+        "remove": "false"
+      },
+      {
+        "id": "coloros_wifi_sense",
+        "version": "v1.6.2",
+        "versionCode": "11",
         "enabled": "true",
         "update": "false",
         "remove": "false"
@@ -149,6 +161,38 @@
         "checked_on": "2026-11-21",
         "check": "ADB pm list packages --user 0 com.arjanvlek.oxygenupdater returned no package."
       }
+    },
+    "wifi_tools": {
+      "wifi_analyzer": {
+        "channel": "VREM stable GitHub APK",
+        "package": "com.vrem.wifianalyzer",
+        "source": "https://github.com/VREMSoftwareDevelopment/WiFiAnalyzer/releases/tag/V3.3.1-F-DROID",
+        "latest": "https://github.com/VREMSoftwareDevelopment/WiFiAnalyzer/releases/latest",
+        "asset": "WiFiAnalyzer-3.3.1.apk",
+        "sha256": "b3917f510a8658e0279efdde33adc22bc14bd40a6c068e74ea187dc385370739",
+        "size_bytes": 2080508,
+        "signer_sha256": "17ea63a0601ce9e246f425580d812e7f5d415b7685d497103bb382af52d35d59",
+        "installed_base_apk_matched": true
+      },
+      "wifi_sense": {
+        "channel": "Author stable GitHub ZIP",
+        "module_id": "coloros_wifi_sense",
+        "source": "https://github.com/mazemingw/coloros-wifi-sense/releases/tag/v1.6.2",
+        "latest": "https://github.com/mazemingw/coloros-wifi-sense/releases/latest",
+        "asset": "coloros-wifi-sense-v1.6.2.zip",
+        "size_bytes": 136853,
+        "sha256": "7de302d4684bd904d45f7e4b4892af2a91a79659a44a3233b54d26126bf4eb8f",
+        "variant": "Core + Fluid Cloud (Volume Up)",
+        "verified_after_reboot": true,
+        "threshold_dbm": -80,
+        "countdown_seconds": 7,
+        "recovery_db": 3,
+        "monitor_with_screen_off": false,
+        "temporarily_avoid_ssid": false,
+        "internet_probe_enabled": false,
+        "restrict_to_5ghz": false
+      },
+      "installed_on": "2026-11-21"
     }
   },
   "rooted_rebuild_baseline": {

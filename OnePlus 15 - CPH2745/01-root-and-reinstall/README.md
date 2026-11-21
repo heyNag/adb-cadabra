@@ -81,7 +81,7 @@ Select the official release APK for KernelSU Manager (package `me.weishu.kernels
 
 ### Recorded rooted components
 
-Use the device overview’s [installed versions, channels and source links](../README.md#verified-setup-on-the-reference-phone) for all seven components. **Vector** was the only component installed from canary. Choose its `*-Release.zip` asset. PixelMask 1.2.0 needed Vector’s Android 17 compatibility fix. KernelSU used the official stable Manager. For Tailscaled, select the stable ARM64 integration ZIP and use its engine updater for the official ARM64 Tailscale engine. [PixelMask compatibility notes](https://github.com/kinginu/PixelMask/releases/tag/18-1.2.0)
+Use the device overview’s [installed versions, channels and source links](../README.md#verified-setup-on-the-reference-phone) for the seven original root components. The Wi-Fi tools have separate [app installation](#install-wifianalyzer) and [KernelSU module activation](#activate-coloros-wi-fi-sense) steps. **Vector** was the only component installed from canary. Choose its `*-Release.zip` asset. PixelMask 1.2.0 needed Vector’s Android 17 compatibility fix. KernelSU used the official stable Manager. For Tailscaled, select the stable ARM64 integration ZIP and use its engine updater for the official ARM64 Tailscale engine. [PixelMask compatibility notes](https://github.com/kinginu/PixelMask/releases/tag/18-1.2.0)
 
 For an exact replay of the November 21 rebuild, `clean_rebuild` in the verification record identifies its inputs. The earlier C.75 baseline is recorded separately under `rooted_rebuild_baseline`. [Recorded builds and artifacts](../02-updates/current/verification.json)
 
@@ -339,6 +339,36 @@ The reference setup has two Vector targets for Android user 0: **PixelMask** and
    ```
 
 4. Look for **Active in Google Photos** and a fresh report. The verified screen read **“Spoofing as Pixel · Photos 7.86.0.956040398 · just now.”** On a future run, expect the installed Photos version and a report from that run. **Not applied to Google Photos yet** means PixelMask has no Photos report. If it persists, recheck the Android user, both scope entries and module enablement, then restart Photos and reopen PixelMask. The result verifies the local Photos process. [PixelMask 1.2.0 status logic](https://github.com/kinginu/PixelMask/blob/18-1.2.0/app/src/main/java/com/kinginu/pixelmask/ui/screens/Home.kt#L145-L204)
+
+### Install WiFiAnalyzer
+
+VREM’s **WiFi Analyzer (open-source)** measures signal strength room by room. It works with ordinary Android app permissions on both stock and rooted phones.
+
+1. Select the APK from VREM’s latest stable GitHub release and verify its asset SHA-256 using section 1. Run `aapt2 dump badging "$asset"` and `apksigner verify --print-certs "$asset"` with Android SDK Build-Tools. Require package `com.vrem.wifianalyzer`, the intended version (3.3.1 is code 72), and VREM’s published **GitHub** certificate SHA-256. Run `phone install "$asset"`. If OnePlus shows its installer scan, verify the app name, version and **No risks found**, then tap the **Continue installation** text beneath the result. Require `Success` on the Mac and confirm the version with `phone shell dumpsys package com.vrem.wifianalyzer | grep -E 'version(Name|Code)='`. For an existing app, use the [in-place update procedure](../02-updates/README.md#update-the-wi-fi-tools). [Latest VREM release](https://github.com/VREMSoftwareDevelopment/WiFiAnalyzer/releases/latest) · [GitHub signing certificate](https://github.com/VREMSoftwareDevelopment/WiFiAnalyzer/blob/main/SECURITY.md) · [Android Build-Tools](https://developer.android.com/tools/releases/build-tools)
+2. Enable Wi-Fi and system **Location**. Open WiFiAnalyzer and allow **Precise location → While using the app**. Allow **Nearby devices** if prompted. Leave KernelSU Superuser off for this app. [Android 17 scan permissions](https://github.com/VREMSoftwareDevelopment/WiFiAnalyzer/wiki/Location-Service-Permission-Requirements)
+3. In **Access Points**, filter to the home network. Open **Time Graph**, select the band and follow the same access point if several share a name. Start near the router, then wait for a fresh dBm reading in each room. With normal Android throttling, sustained foreground scans average about one per 30 seconds. Keep home-network test results, including signal readings, network names, access-point addresses and screenshots, off GitHub. [User manual](https://github.com/VREMSoftwareDevelopment/WiFiAnalyzer/blob/main/USER_MANUAL.md#time-graph) · [Scan limits](https://github.com/VREMSoftwareDevelopment/WiFiAnalyzer/wiki/Android-Wi%E2%80%90Fi-scanning-throttling)
+
+### Activate ColorOS Wi-Fi Sense
+
+On the Indian CPH2745 with **official KernelSU** working, this module can disconnect a weak access point after a countdown while keeping Wi-Fi enabled.
+
+1. Select the stable `coloros-wifi-sense-v*.zip`, apply section 1’s asset SHA-256 check and section 4’s ZIP and phone-copy checks. Inspect `unzip -p "$asset" module.prop` for ID `coloros_wifi_sense` and the selected version (v1.6.2 is code 11). On the booted handset, select the verified ZIP in **KernelSU → Modules → Install from storage**. At v1.6.2’s physical prompt **Volume Up** includes core monitoring and Fluid Cloud notifications. **Volume Down** installs core only and omits the notification component. Require installer success, then reboot and unlock Android once. The reference setup uses **Volume Up** (core + Fluid Cloud). The same choice applies when using `ksud module install` through authorized ADB. [Latest author release](https://github.com/mazemingw/coloros-wifi-sense/releases/latest) · [Tagged installer](https://github.com/mazemingw/coloros-wifi-sense/blob/v1.6.2/customize.sh)
+2. Wait for `phone shell getprop sys.boot_completed` to return `1`. Check `phone shell "su -c '/data/adb/ksud module list'"` for the expected version, enabled, with no pending update or removal. Open the module’s **WebUI**. On a fresh v1.6.2 installation the threshold is **−80 dBm**, countdown **7 seconds**, and recovery margin **3 dB**. Screen-off monitoring, 5-GHz-only mode, connectivity probes and temporary SSID avoidance default to off. The module card’s **Action** changes the threshold. [Author’s guide](https://github.com/mazemingw/coloros-wifi-sense/tree/v1.6.2#readme)
+3. Run the fresh daemon check below in the same Terminal. `fluid_installed` identifies the installed variant and `fluid_enabled` its current setting. For the Fluid Cloud variant with notifications enabled, preview the countdown on the unlocked screen with `phone shell "su -c 'sh /data/adb/modules/coloros_wifi_sense/demo.sh'"`. The demo keeps Wi-Fi connected. Keep identifiers and screenshots private when reporting results. [Boot service](https://github.com/mazemingw/coloros-wifi-sense/blob/v1.6.2/service.sh) · [Status command](https://github.com/mazemingw/coloros-wifi-sense/blob/v1.6.2/webctl.sh) · [Notification demo](https://github.com/mazemingw/coloros-wifi-sense/blob/v1.6.2/demo.sh)
+
+```sh
+set -o pipefail
+wifi_request=$(uuidgen) &&
+  phone shell "su -c 'sh /data/adb/modules/coloros_wifi_sense/webctl.sh status $wifi_request'" |
+  python3 -c '
+import json, sys
+status = json.load(sys.stdin)
+if status.get("request") != sys.argv[1] or status.get("pid", 0) <= 0:
+    sys.exit("No fresh response from the Wi-Fi Sense daemon.")
+for key in ("state", "threshold", "countdown_seconds", "fluid_installed", "fluid_enabled"):
+    print(key, status[key])
+' "$wifi_request"
+```
 
 After verification, refresh the [shared inventory](../README.md#verified-setup-on-the-reference-phone) and [current verification](../02-updates/current/verification.json) with the running versions, selected release links and digests. Record the verified firmware, patched filename and actual SHA-256. Keep this run’s stock fallback through boot, module activation and verification. When cleaning up the temporary downloads, remove only the selected run directory.
 
