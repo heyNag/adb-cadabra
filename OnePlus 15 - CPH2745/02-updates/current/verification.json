@@ -170,7 +170,7 @@
     "check_scope": "PixelMask was verified through its package and Vector configuration. Tailscale sign-in and peer connectivity are deferred."
   },
   "factory_restore_check": {
-    "checked_at": "2026-11-21T16:46+07:00",
+    "checked_at": "2026-11-21T16:54+07:00",
     "active_slot": "b",
     "flash_locked": false,
     "verified_boot": "orange",
@@ -248,9 +248,20 @@
           "rear_cameras": "3 × 50 MP",
           "front_camera": "32 MP"
         }
+      },
+      "os_updater_install_guide": {
+        "observed": "2026-11-21T16:54+07:00",
+        "screen": "Install guide",
+        "options_as_shown": [
+          "OS built-in Local install (recommended outside North America).",
+          "OnePlus-provided local update APKs (fallback).",
+          "System recovery (non-A/B devices only)."
+        ],
+        "applicable_option": "Option 1 for the Indian CPH2745 with A/B slots.",
+        "observed_result": "Install guide displayed. Package application and C.80 boot remain unverified."
       }
     },
-    "restore_progress": "Stock C.75 init_boot_b written. Android boot and absence of KernelSU runtime verified. The C.80 full ZIP was copied from the Mac and verified on the phone. The owner will handle the update. C.80 installation, locked green boot, wipe and first welcome screen await verification.",
+    "restore_progress": "Stock C.75 init_boot_b written. Android boot and absence of KernelSU runtime verified. The C.80 full ZIP was copied from the Mac and verified on the phone. OS Updater displayed the Install guide for the owner. C.80 installation, locked green boot, wipe and first welcome screen await verification.",
     "before_unroot": {
       "partition_comparison": {
         "build": "CPH2745_17.0.0.102(EX01)",
