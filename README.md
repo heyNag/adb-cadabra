@@ -2,6 +2,14 @@
 
 A macOS walkthrough and verification record for the **OnePlus 15, Indian model CPH2745**. The device overview brings together the [installed versions, channels and download sources](OnePlus%2015%20-%20CPH2745/README.md#verified-setup-on-the-reference-phone) and the [folder tree](OnePlus%2015%20-%20CPH2745/README.md#folder-tree). Check your own phone’s build, region, active slot and lock state before using a procedure.
 
+## Verified C.80 locked boot
+
+On November 21, 2026, this phone **booted stock C.80 on slot A with the bootloader locked**. We started from rooted C.75 on slot B, restored stock firmware, installed the official Indian C.80 update, and relocked the bootloader. After the wipe, the phone reached **Hello ColorOS 17**. Android then reported a locked bootloader and green Verified Boot. [Verification record](OnePlus%2015%20-%20CPH2745/02-updates/current/verification.json)
+
+We later unlocked and rooted that same C.80 installation on slot A. The only remaining question about restoring this phone to locked C.80 is whether we can **start from its current rooted C.80 setup**, restore stock C.80, relock, and confirm a second locked boot. [Restore guide for the rooted C.80 starting point](OnePlus%2015%20-%20CPH2745/03-restore-to-stock/README.md#return-the-rebuilt-c80-slot-a-to-stock-boot)
+
+## Choose a workflow
+
 | What do you want to do? | Start here |
 |---|---|
 | Root a stock phone, or erase and rebuild a rooted phone | [Clean install or redo](OnePlus%2015%20-%20CPH2745/01-root-and-reinstall/README.md) |
