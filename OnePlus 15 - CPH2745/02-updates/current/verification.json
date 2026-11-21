@@ -170,7 +170,7 @@
     "check_scope": "PixelMask was verified through its package and Vector configuration. Tailscale sign-in and peer connectivity are deferred."
   },
   "factory_restore_check": {
-    "checked_at": "2026-11-21T16:54+07:00",
+    "checked_at": "2026-11-21T17:01+07:00",
     "active_slot": "b",
     "flash_locked": false,
     "verified_boot": "orange",
@@ -193,7 +193,7 @@
         "copied_by": "USB from the verified Mac download",
         "bytes_verified": 9301191889,
         "sha256_matched_mac": true,
-        "local_install_when_checked": "Disabled in the built-in Software update menu. No package selected."
+        "local_install_when_checked": "Initially disabled in the built-in Software update menu. No package selected at that check."
       },
       "manufacturer_source_check": {
         "index": "OnePlus 15 / IN / full / info",
@@ -210,7 +210,19 @@
         "build": "CPH2745_17.0.1.201",
         "before_stock_init_boot": "2.17 GB",
         "after_stock_init_boot": "8.97 GB",
-        "local_install_enabled_when_checked": false
+        "local_install_enabled_before_workaround": false,
+        "local_install_offline_check": {
+          "observed": "2026-11-21T17:01+07:00",
+          "package": "com.oplus.ota",
+          "owner_report": "The owner reported success after receiving the steps to disconnect the networks and clear only Software update app data.",
+          "menu_item": "Local install",
+          "screen_message": "No network connection",
+          "adb_wifi_on": 0,
+          "adb_mobile_data": 0,
+          "running_build": "CPH2745_17.0.0.102(EX01)",
+          "c80_application_and_reboot": "Unverified at this check.",
+          "accessibility_node_enabled": true
+        }
       },
       "os_updater_screen_before_owner_update": {
         "observed": "2026-11-21 16:44–16:45 Asia/Bangkok",
@@ -261,7 +273,7 @@
         "observed_result": "Install guide displayed. Package application and C.80 boot remain unverified."
       }
     },
-    "restore_progress": "Stock C.75 init_boot_b written. Android boot and absence of KernelSU runtime verified. The C.80 full ZIP was copied from the Mac and verified on the phone. OS Updater displayed the Install guide for the owner. C.80 installation, locked green boot, wipe and first welcome screen await verification.",
+    "restore_progress": "Stock C.75 init_boot_b written. Android boot and absence of KernelSU runtime verified. The C.80 full ZIP was copied from the Mac and verified on the phone. The built-in Local install option is available offline on C.75. C.80 installation, locked green boot, wipe and first welcome screen await verification.",
     "before_unroot": {
       "partition_comparison": {
         "build": "CPH2745_17.0.0.102(EX01)",
