@@ -66,7 +66,7 @@ Proceed only when OnePlus confirms that the restored manufacturer-signed firmwar
 | Completion check | Evidence |
 | --- | --- |
 | Official firmware boots normally | The installed build matches the OnePlus-approved target and reaches Android setup without a Verified Boot warning. |
-| Bootloader is locked under the manufacturer’s key | Verify the lock and Verified Boot result using the OnePlus procedure or service diagnostic. When Android properties are already accessible, the expected values are `ro.boot.flash.locked=1`, `ro.boot.vbmeta.device_state=locked` and `ro.boot.verifiedbootstate=green`. [Android boot-flow indicators](https://source.android.com/docs/security/features/verifiedboot/boot-flow) |
+| Bootloader is locked under the manufacturer’s key | Verify the lock and Verified Boot result using the OnePlus procedure or service diagnostic, even if the orange warning has disappeared or Play Integrity passes. When Android properties are already accessible, the expected values are `ro.boot.flash.locked=1`, `ro.boot.vbmeta.device_state=locked` and `ro.boot.verifiedbootstate=green`. [Android boot-flow indicators](https://source.android.com/docs/security/features/verifiedboot/boot-flow) |
 | Factory data has been erased | The authorized wipe completed, the device reaches initial setup and the previous user profile is gone. For handoff, leave it at setup. |
 | Current state is documented | Record the verified model, firmware, wipe, bootloader and Verified Boot results. Update the [installed inventory](../README.md#installed-on-your-oneplus-15) and [current verification](../02-updates/current/verification.json). Record any check that only OnePlus service could perform. |
 
