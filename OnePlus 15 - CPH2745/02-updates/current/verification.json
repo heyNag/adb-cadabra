@@ -5,10 +5,10 @@
     "ro.build.display.id": "CPH2745_17.0.1.201(EX01)",
     "ro.build.fingerprint": "OnePlus/CPH2745IN/OP611FL1:17/CP2A.260605.016/B.R4T3.50a3663-29f0eba-29fce1c:user/release-keys",
     "ro.boot.slot_suffix": "_a",
-    "ro.boot.flash.locked": "1",
+    "ro.boot.flash.locked": "0",
     "sys.boot_completed": "1",
-    "ro.boot.vbmeta.device_state": "locked",
-    "ro.boot.verifiedbootstate": "green",
+    "ro.boot.vbmeta.device_state": "unlocked",
+    "ro.boot.verifiedbootstate": "orange",
     "ro.boot.veritymode": "enforcing",
     "ro.build.version.security_patch": "2026-11-01",
     "ro.boot.vbmeta.digest": "b3a36735edddc817c5e7c14a05f2bda6935ab3c7d92b56632251ccb78f65b2c3",
@@ -18,10 +18,118 @@
     "init.svc.zygote": "running"
   },
   "current_state": {
-    "phase": "Bootloader unlock confirmed on the phone. Waiting for post-wipe Android to authorize the Mac.",
-    "last_observation": "Owner confirmed restart with orange-state warning after the single unlock request.",
-    "last_adb_reading": "The top-level device values are the last authorized Android measurements, taken before the unlock.",
-    "kernelsu_rebuild": "Patch prepared and verified on Mac. Root and modules pending live verification."
+    "checked_at": "2026-11-21T17:56:11+07:00",
+    "firmware": "Stock Indian C.80 with freshly patched init_boot_a",
+    "kernel": "6.12.69-android16-6-g5fd39602326e-ab16372235-4k",
+    "selinux": "Enforcing",
+    "kernelsu_mode": "Working / LKM",
+    "kernelsu_module_in_proc_modules": true,
+    "shell_root": "uid=0(root) gid=0(root) groups=0(root) context=u:r:ksu:s0",
+    "android_packages": {
+      "me.weishu.kernelsu": {
+        "version": "v3.3.1",
+        "versionCode": 32680
+      },
+      "com.kinginu.pixelmask": {
+        "version": "1.2.0",
+        "versionCode": 18
+      }
+    },
+    "modules": [
+      {
+        "id": "bindhosts",
+        "version": "v2.1.5",
+        "versionCode": "215",
+        "enabled": "true",
+        "update": "false",
+        "remove": "false"
+      },
+      {
+        "id": "kernelsu-tailscaled",
+        "version": "2.0.5",
+        "versionCode": "20000017",
+        "enabled": "true",
+        "update": "false",
+        "remove": "false"
+      },
+      {
+        "id": "zygisksu",
+        "version": "1.5.3 (880-22a1bf5-release)",
+        "versionCode": "880",
+        "enabled": "true",
+        "update": "false",
+        "remove": "false"
+      },
+      {
+        "id": "zygisk_vector",
+        "version": "v2.2 (3119-6f6b976e-JingMatrix-Vector)",
+        "versionCode": "3119",
+        "enabled": "true",
+        "update": "false",
+        "remove": "false"
+      }
+    ],
+    "zygisk_next": {
+      "version": "1.5.3-880-22a1bf5-release",
+      "inject_state": "1",
+      "modules64": "1,zygisk_vector",
+      "modules_with_issue": "0",
+      "root_status": "✅KernelSU (32680)"
+    },
+    "vector": {
+      "Framework Version": "2.2",
+      "Version Code": 3119,
+      "API Version": 102,
+      "Enabled Modules": 1,
+      "Status Notification": true
+    },
+    "vector_addons": [
+      {
+        "PACKAGE": "com.kinginu.pixelmask",
+        "UID": 10426,
+        "STATUS": "enabled"
+      }
+    ],
+    "vector_scope": [
+      {
+        "APP_PACKAGE": "com.kinginu.pixelmask",
+        "USER_ID": 0
+      }
+    ],
+    "bindhosts": {
+      "active": true,
+      "operating_mode": 10,
+      "blocked_domains_at_refresh": 196894,
+      "custom_domains": 0,
+      "scheduled_updates_enabled": false,
+      "chrome_profile": {
+        "superuser": false,
+        "unmount_modules": false
+      },
+      "doubleclick.net": "PING doubleclick.net (127.0.0.1) 56(84) bytes of data.",
+      "example.com": "PING example.com (104.20.23.154) 56(84) bytes of data."
+    },
+    "tailscale": {
+      "module": "2.0.5",
+      "engine_status": {
+        "current": "1.104.7",
+        "latest": "1.104.7",
+        "staged": ""
+      },
+      "mode": "native",
+      "enabled": true,
+      "lifecycle": "degraded",
+      "backend": "NeedsLogin",
+      "components": {
+        "supervisor": "running",
+        "daemon": "running",
+        "dataPlane": "unknown",
+        "web": "running"
+      }
+    },
+    "scope_note": "PixelMask is enabled in Vector only for its own Android package, user 0. This differs from its previous Photos scope. Google Photos stayed closed. Tailscale remains signed out.",
+    "launcher_after_handoff": "com.android.launcher/.Launcher",
+    "vector_auto_include_rules": 0
   },
   "rooted_rebuild_baseline": {
     "root": "uid=0(root) gid=0(root) groups=0(root) context=u:r:ksu:s0",
@@ -511,6 +619,81 @@
       "request_count": 1,
       "fastboot_reply": "OKAY [  0.010s]",
       "owner_observation": "Confirmed the wipe, restart and orange unlocked-boot warning."
+    },
+    "flash": {
+      "partition": "init_boot_a",
+      "post_unlock_preflight": "Same firmware, KMI and slot A. Normal fastboot, unlocked yes, 0x800000 bytes, A successful and bootable; snapshot none.",
+      "result": "8192 KB sent OKAY, written OKAY, reboot OKAY.",
+      "boot_result": "C.80 on slot A, boot completed, kernelsu present in /proc/modules, SELinux enforcing."
+    },
+    "release_artifacts": {
+      "KernelSU": {
+        "channel": "stable",
+        "release": "v3.3.1",
+        "source": "https://github.com/tiann/KernelSU/releases/tag/v3.3.1",
+        "asset": "KernelSU_v3.3.1_32680-release.apk",
+        "bytes": 13637206,
+        "sha256": "b4a059ace71de2fa65cc7f12b1c58d55fc23ab25e057ee4230ce779742abe450",
+        "matches_published_asset": true
+      },
+      "bindhosts": {
+        "channel": "stable",
+        "release": "v2.1.5",
+        "source": "https://github.com/bindhosts/bindhosts/releases/tag/v2.1.5",
+        "asset": "bindhosts.zip",
+        "bytes": 258303,
+        "sha256": "1568c00bbaddf94a10f191b27c0fe68690375ed0c90cc409c095a53b195f6b13",
+        "matches_published_asset": true
+      },
+      "KernelSU-Tailscaled": {
+        "channel": "stable",
+        "release": "v2.0.5",
+        "source": "https://github.com/WayneShao/KernelSU-Tailscaled/releases/tag/v2.0.5",
+        "asset": "KernelSU-Tailscaled-arm64-v2.0.5.zip",
+        "bytes": 37067455,
+        "sha256": "b1be2efa01f5174edb42de6bf74d0033c2d145dc6356aeef98e62e431574c498",
+        "matches_published_asset": true
+      },
+      "Zygisk Next": {
+        "channel": "stable",
+        "release": "v1.5.3",
+        "source": "https://github.com/Dr-TSNG/ZygiskNext/releases/tag/v1.5.3",
+        "asset": "Zygisk-Next-1.5.3-880-22a1bf5-release.zip",
+        "bytes": 6638473,
+        "sha256": "186a0a26c9fcb895af1954b42de831433c23d72d1bd0758b986069154359db67",
+        "matches_published_asset": true
+      },
+      "Vector": {
+        "channel": "canary",
+        "release": "canary-3119",
+        "source": "https://github.com/JingMatrix/Vector/releases/tag/canary-3119",
+        "asset": "Vector-v2.2-3119-Release.zip",
+        "bytes": 7458120,
+        "sha256": "31c83bc75837e3282f74f0d3228cb683461e68b578af728ad211e2eee9fcafc0",
+        "matches_published_asset": true
+      },
+      "PixelMask": {
+        "channel": "stable",
+        "release": "18-1.2.0",
+        "source": "https://github.com/kinginu/PixelMask/releases/tag/18-1.2.0",
+        "asset": "PixelMask-1.2.0.apk",
+        "bytes": 16148446,
+        "sha256": "7dcaee04a6c1dbb5e9a8b9d3ccb96fcd0efe4fddb690b7157315987382b03afd",
+        "matches_published_asset": true
+      },
+      "Tailscale engine": {
+        "channel": "stable",
+        "release": "1.104.7",
+        "source": "https://pkgs.tailscale.com/stable/tailscale_1.104.7_arm64.tgz",
+        "asset": "tailscale_1.104.7_arm64.tgz",
+        "official_sha256": "d6bed2720310b328b861f943d7b4016c5358a9bad60575eb51e8143b79068484",
+        "verified_by": "Stable integration updater verified, staged and applied the official ARM64 engine package."
+      }
+    },
+    "channel_check": {
+      "checked_at": "2026-11-21T17:56:11+07:00",
+      "result": "All seven installed versions matched the newest release on the previously selected channel. Six stable and Vector canary Release.",
+      "release_metadata": "GitHub upstream releases for KernelSU, bindhosts, KernelSU-Tailscaled, Zygisk Next, Vector and PixelMask. Tailscale official stable ARM64 release feed."
     }
   }
 }
