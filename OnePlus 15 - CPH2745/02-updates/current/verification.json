@@ -140,6 +140,15 @@
       "method": "Appended the missing Google Photos target, read back the full Vector scope and enabled module, restarted Google Photos into a new process, then read PixelMask Home.",
       "home_status": "Active in Google Photos",
       "home_detail": "Spoofing as Pixel · Photos 7.86.0.956040398 · just now"
+    },
+    "optional_apps": {
+      "com.arjanvlek.oxygenupdater": {
+        "name": "OS Updater",
+        "user_id": 0,
+        "installed": false,
+        "checked_on": "2026-11-21",
+        "check": "ADB pm list packages --user 0 com.arjanvlek.oxygenupdater returned no package."
+      }
     }
   },
   "rooted_rebuild_baseline": {
