@@ -13,10 +13,24 @@
   "source_archive_path": "/remove-1b11a964dc131f65c034b63e6434d206/g-d256e581826faa02bf50a06180697a3d/component-ota/26/10/18/847936259a7446bbb7d62be1a8c8bff8.zip",
   "source_archive_bytes": 9240351005,
   "discovery_index": "https://oosdownloader-gui.fly.dev/api/oneplus/oneplus_15/IN/full/info",
-  "provenance_limitations": [
+  "initial_extraction_notes": [
     "Images fetched over HTTPS from the resolved OnePlus/OPlus OTA CDN; third-party index used only to discover the official package.",
     "Metadata SHA256 checked against OTA payload_properties; each data operation and final image checked against payload manifest SHA256.",
-    "Full 9.24GB archive was not downloaded: whole-archive MD5/SHA256 and payload/vendor cryptographic signatures were not verified.",
-    "These stock images restore only their respective partitions; this is not a complete unbrick package."
-  ]
+    "On November 8, the extraction used ranges from the archive. Whole-file hashes and cryptographic signatures were outside that initial check."
+  ],
+  "later_archive_verification": {
+    "checked_on": "2026-11-21",
+    "whole_archive_bytes": 9240351005,
+    "whole_archive_sha256": "645afc94fa6f31ac2bd62a172d95f883edbc5d0819001a97d33406683ed62a75",
+    "whole_archive_cms_verified_against_device_trust_store": true,
+    "payload_metadata_signature_verified_against_device_trusted_key": true,
+    "stock_init_boot_bytes": 8388608,
+    "stock_init_boot_sha256": "8910c3ce57893273120434866ef29a436771ae931290e83156807153c8936002",
+    "evidence": "../../02-updates/current/verification.json",
+    "evidence_fields": [
+      "factory_restore_check.c75_stock_boot_test",
+      "factory_restore_check.before_unroot.metadata_signature"
+    ]
+  },
+  "coverage": "The extracted images restore their corresponding partitions. The archive supplies a full OTA for the target partition set."
 }

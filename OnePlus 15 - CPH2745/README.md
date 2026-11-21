@@ -6,9 +6,11 @@
 |---|---|---|
 | [01 · Clean install or redo](01-root-and-reinstall/README.md) | Start on official unrooted firmware, or [wipe and rebuild a phone that still has root](01-root-and-reinstall/README.md#redo-on-an-already-rooted-phone). | Start with fresh user data and install the selected modules from their official channels. On a redo, check whether the existing KernelSU patch survived the reset before patching anything. |
 | [02 · Update what’s installed](02-updates/README.md) | The phone already has components you want to update. | Update each installed component to the latest compatible release on its existing channel, preserve its settings and verify the running version. |
-| [03 · Restore to official factory state](03-restore-to-stock/README.md) | Return a rooted phone to factory condition. This erases user data. | Restore official OnePlus firmware for the device and region, verify it before relocking, then confirm a locked bootloader, green Android Verified Boot and a fresh setup screen. |
+| [03 · Restore to official factory state](03-restore-to-stock/README.md) | Start from the phone’s actual build and slot. The guide covers the [current C.80 slot A starting point](03-restore-to-stock/README.md#return-the-rebuilt-c80-slot-a-to-stock-boot) and the tested C.75-to-C.80 factory reset. | The C.75-to-C.80 run reached the welcome screen and a verified locked, green boot. The C.80 entry explains the evidence needed before relocking from that starting state. |
 
-## Installed on your OnePlus 15
+<a id="installed-on-your-oneplus-15"></a>
+
+## Verified setup on the reference phone
 
 **Verified November 21, 2026 at 17:56 Bangkok time.** The Indian OnePlus 15 runs Android 17 `CPH2745_17.0.1.201(EX01)` (C.80) on slot A, with the bootloader unlocked, KernelSU working in LKM mode, and SELinux enforcing. The authorized ADB shell returned UID 0. All seven versions below matched their upstream release channels at this check. Future updates should follow the **Latest on this channel** links. [Current measurements and verified artifact hashes](02-updates/current/verification.json) · [Update installed components](02-updates/README.md)
 
@@ -30,9 +32,11 @@
 
 **To get the latest full firmware**, open **Settings → About device → Software update**, read the build offered for this phone, then select **OnePlus 15 → India → Full** in the firmware index. Use the phone only to read the offered build. Download the ZIP on the Mac from the OnePlus/OPlus distribution link located by the index. Resolve a fresh link each time. [Latest India full-package metadata](https://oosdownloader-gui.fly.dev/api/oneplus/oneplus_15/IN/full/info) · [Download and verification instructions](03-restore-to-stock/README.md#get-the-latest-full-indian-firmware)
 
+**Optional firmware lookup app.** OS Updater (also known as Oxygen Updater, package `com.arjanvlek.oxygenupdater`) is a third-party app that works without root. On the handset, confirm **OnePlus 15 (IN)** and the **Full** package. Use its build, ZIP filename and MD5 to cross-check the offered release. On this restore it identified C.80 and provided an install guide. OnePlus’s built-in **Local install** applied the package. The Mac walkthrough verifies the firmware signature independently. [OS Updater on Google Play](https://play.google.com/store/apps/details?id=com.arjanvlek.oxygenupdater) · [Project website](https://oxygenupdater.com/) · [If Local install is missing or greyed out](03-restore-to-stock/README.md#if-local-install-is-missing-or-greyed-out)
+
 **Last firmware check, November 21, 2026.** The built-in local installer updated this phone from C.75 on slot B to C.80 on slot A. The full India ZIP is 9,301,191,889 bytes. Its signature matched a trusted OTA key on the phone. It carries complete images for 65 target partitions and declares a partial partition set. The procedure recorded here was performed on this specific handset. OnePlus’s public India materials document routine updates and offer a service route. Both releases were available from the manufacturer's CDN with freshly resolved links. The C.75 stock and patched boot images belong to the previous build. The C.80 rebuild extracted stock `init_boot` from its authenticated India OTA and produced a fresh KernelSU patch for slot A. [Recorded C.75 identity](01-root-and-reinstall/kit/firmware-identification.json) · [Exact-build extraction](01-root-and-reinstall/README.md#2-select-a-matching-image)
 
-**To recreate the rooted setup**, use each project’s **Latest on this channel** link for its APK, module ZIP or engine. The [recorded rooted components](01-root-and-reinstall/README.md#recorded-rooted-components) list the exact builds and their sources. Use one [temporary Mac working folder](../README.md#temporary-mac-working-folder) for the entire operation.
+**To recreate the rooted setup**, use each project’s **Latest on this channel** link for its APK, module ZIP or engine. The **Installed from** column in the [inventory](#verified-setup-on-the-reference-phone) identifies the releases used on this phone. Use one [temporary Mac working folder](../README.md#temporary-mac-working-folder) for the entire operation.
 
 | Item | Source and how to obtain it |
 |---|---|

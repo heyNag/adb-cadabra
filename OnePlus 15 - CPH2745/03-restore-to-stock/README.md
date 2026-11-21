@@ -2,9 +2,9 @@
 
 On November 21, 2026, this Indian OnePlus 15 went from KernelSU on C.75 slot B to the official C.80 release on slot A, with user data erased and the bootloader locked. The owner saw **Hello ColorOS 17** after the wipe. After the owner chose to finish setup, Android reported **locked**, **green** and the AVB digest from the signed C.80 archive. The steps below describe that handset and those two builds. [Measured results](../02-updates/current/verification.json)
 
-For the two fastboot visits, start with [the stock image write on slot B](#restore-the-c75-stock-boot-image-on-b), then follow [entry on slot A and the bootloader checks](#from-running-android-to-the-bootloader-menu) and [the lock confirmation on the phone](#show-the-lock-confirmation-and-hand-the-phone-to-the-owner).
+Start by reading the actual firmware and active slot over USB in section 1. The [current device inventory](../README.md#verified-setup-on-the-reference-phone) records a later rooted C.80/A rebuild. Its [stock boot restoration procedure and limits](#return-the-rebuilt-c80-slot-a-to-stock-boot) are separate from the original [C.75/B to C.80/A restore](#stage-the-c75-to-c80-packages). Only the latter went through both fastboot visits and a verified locked boot on this handset.
 
-## 1. Identify the phone and stage the two releases
+## 1. Identify the phone and stage the firmware
 
 Back up wanted data off the phone and verify the copy. Confirm the owner accepts loss of all local data and can access the screen-lock and previously synced account credentials that setup may require. Leave Google Photos closed. Connect the unlocked screen to the Mac with a USB data cable. With **USB debugging** enabled, accept the USB debugging authorization dialog for your Mac. In Terminal, require the intended serial to show `device` in the first command below. If it shows `unauthorized`, unlock the screen and accept the dialog before continuing. Use current Android Platform Tools and keep the same Terminal session. [Mac tool setup](../01-root-and-reinstall/README.md#0-set-up-a-fresh-mac-and-phone) [Android Platform Tools](https://developer.android.com/tools/releases/platform-tools)
 
@@ -34,8 +34,48 @@ umask 077
 RUN_BASE="$HOME/Downloads/adb-cadabra/OnePlus 15 - CPH2745"
 mkdir -p "$RUN_BASE" &&
   RESTORE_DIR=$(mktemp -d "$RUN_BASE/factory-$(date +%Y%m%d-%H%M%S)-XXXXXXXX") &&
+  DOWNLOAD_DIR=$RESTORE_DIR &&
   printf '%s\n' "$RESTORE_DIR"
 ```
+
+The shared extraction steps use `DOWNLOAD_DIR` as a second name for this run directory. Use the route matching section 1’s live readings. The recorded C.75/B case continues at [Stage the C.75 to C.80 packages](#stage-the-c75-to-c80-packages). For a different firmware, slot, patch or region, identify its source image and update eligibility before writing a partition.
+
+### Return the rebuilt C.80 slot A to stock boot
+
+This branch covers the Indian `CPH2745_17.0.1.201(EX01)` rebuild with the recorded KernelSU patch on `init_boot_a`. The stock and patched images, the original stock boot and the later patch flash were verified. Reversing that flash and relocking from this starting state have not been run on this handset. If a *locked factory handoff* is essential, establish the supported update or OnePlus service route before removing root. Simply reversing the patch keeps the bootloader unlocked and preserves user data. [Rebuild inputs and actual flash](../02-updates/current/verification.json) · [OnePlus India service](https://www.oneplus.in/support/repair)
+
+1. Verify the live product `CPH2745IN`, device `OP611FL1`, exact C.80 fingerprint, slot `_a`, boot completed, and unlocked/orange state. Confirm that `phone shell su -c id` returns UID 0. Use [the matching C.80 archive](verify-ota.md#obtain-the-matching-c80-source-archive) for the **running** India firmware, even if the live index has moved on. After authenticating it, follow the [extractor setup](../01-root-and-reinstall/README.md#get-the-mac-ota-extractor) and stock-image checks. Return here as soon as the C.80 stock image reports `OK`. Keep `stock_image` set to that verified output. The authenticated C.80 archive was 9,301,191,889 bytes with SHA-256 `c7ebbcf62c64895ec9c49fe0988b6f0b40a682d95b5c8a310457afb67de5d9db`.
+2. Read the active patch back to the private Mac run while root still works. Require **two `OK` results** and both file lengths of 8,388,608 bytes. These digests apply only to the documented rebuild.
+
+   ```sh
+   C80_STOCK=${stock_image:?Verify the matching C.80 stock image first}
+   C80_RECOVERY=$(mktemp -d "${RESTORE_DIR:?Create the private run directory}/c80-fallback-XXXXXXXX") &&
+     C80_PATCH="$C80_RECOVERY/init_boot_a.patched.img" &&
+     phone exec-out "su -c 'cat /dev/block/by-name/init_boot_a'" > "$C80_PATCH" &&
+     [ "$(stat -f '%z' "$C80_PATCH")" = 8388608 ] &&
+     [ "$(stat -f '%z' "$C80_STOCK")" = 8388608 ] &&
+     printf '%s  %s\n' \
+       42ed7c095551a6a94a395d3d9c28b493b20779c3a52e4ffc256a864a11b158f1 "$C80_PATCH" \
+       cf870b50cf44845c5e9070afe7a13188aa5a13efc1bc7cddb42f49f217074420 "$C80_STOCK" |
+     shasum -a 256 -c -
+   ```
+
+3. Run `phone reboot bootloader`. Wait for `fastboot devices -l` to show the selected serial. Inspect every read-only reply:
+
+   ```sh
+   for key in product is-userspace current-slot unlocked partition-size:init_boot_a \
+              slot-successful:a slot-unbootable:a snapshot-update-status; do
+     fb getvar "$key"
+   done
+   ```
+
+   Require `canoe`, `no`, `a`, `yes`, `0x800000`, `yes`, `no` and `none`, respectively. If any gate fails, leave the partitions untouched. Once all match and the owner approves the write, run `fb flash init_boot_a "$C80_STOCK"` once, require **Sending OKAY** and **Writing OKAY**, then run `fb reboot`.
+4. Wait for Android on the same serial. Require the same C.80 fingerprint and slot A, `sys.boot_completed=1`, and `ro.boot.veritymode=enforcing`. Check `phone shell su -c id` and `phone shell cat /proc/modules` for an unavailable `su` and no loaded `kernelsu` module. The expected bootloader state at this checkpoint is unlocked/orange. If the first stock boot fails after that single write, return to normal fastboot, verify the same serial, product, unlocked A slot and partition size, verify the saved patch digest again, then use `fb flash init_boot_a "$C80_PATCH"` to undo the write. Require both OKAY responses before rebooting. If identity or slot has changed, stop and retain the recovery files.
+5. **Factory-lock boundary.** The patched C.80 boot and the earlier locked stock C.80 boot reported the *same* signed VBMeta digest. It identifies the verification metadata; while unlocked, that match alone cannot establish that every partition verifies. The demonstrated locked handoff followed a newer full India package accepted by the stock updater, a successful boot and a completed slot merge. If the updater offers no eligible successor or the only proposal is to reinstall the same build, this guide has no verified lock procedure from this state. Leave the bootloader unlocked unless a procedure for that exact firmware and slot state has been established. If an eligible successor is offered, authenticate it separately and verify **its own** target fingerprint, successful active slot, stock boot and merge status before considering a lock. The slot-A results later in this document describe the earlier run. [Verified restore evidence](../02-updates/current/verification.json)
+
+The remaining steps are the historical C.75/B to C.80/A case.
+
+### Stage the C.75 to C.80 packages
 
 - **Source firmware.** Obtain the official full archive matching the running build. For C.75 follow [Obtain the matching C.75 source archive](verify-ota.md#obtain-the-matching-c75-source-archive). It covers the archived manufacturer link, authentication, extraction of stock `init_boot.img` and the return to the main run directory. This archive passed verification with the phone’s trusted OTA certificate. Extracted `init_boot.img` was 8,388,608 bytes. [C.75 archive, identity and extraction commands](../01-root-and-reinstall/README.md#2-select-a-matching-image) · [Recorded C.75 image digests](../01-root-and-reinstall/kit/IMAGE-SHA256SUMS)
 - **Destination firmware.** In **Settings → About device → Software update**, read the offered build. Do the firmware download on the Mac. If Android reports **Up to date**, compare its installed build with the live India full index. For a newer unoffered release, independently match the India release notes and check rollout eligibility. Select **OnePlus 15 → India → Full** and use the verification guide to resolve the manufacturer's HTTPS URL, download, authenticate and assign `OTA` to the resulting local ZIP. A 403, error 2306 or an HTML response calls for a fresh link. [India full-package index](https://oosdownloader-gui.fly.dev/api/oneplus/oneplus_15/IN/full/info) · [Mac download, ZIP signature and payload checks](verify-ota.md) · [OnePlus release notes](https://community.oneplus.com/)
@@ -128,7 +168,25 @@ shasum -a 256 "$OTA"
 phone shell sha256sum "$PHONE_ZIP"
 ```
 
-Open **Settings → About device → Software update → More options → Local install**. In the file picker choose the full ZIP whose bytes and checksum you verified. The Mac copy was staged under **Downloads → adb-cadabra-restore**. The owner also started the same release in OS Updater. During this run the agent told the owner to choose the manufacturer filename, `69a6c985451e47f78054a256ac54218d.zip`. The next recorded screen showed the target build. The exact file-picker path is the one unobserved step in that handoff. OS Updater’s install guide recommended this built-in option for the Indian A/B device. If **Local install** is disabled, disconnect Wi-Fi and mobile data, open **Apps → App management → Show system → Software update → Storage usage → Clear data**, then reopen **Software update → More options** offline. To open the right App info page over authorized USB, use `phone shell am start -a android.settings.APPLICATION_DETAILS_SETTINGS -d package:com.oplus.ota`. The owner reported this worked, and we verified the control was enabled beside **No network connection**. [OnePlus 15 troubleshooting](https://community.oneplus.com/thread/2241561632796835845)
+Open **Settings → About device → Software update → More options → Local install**. If the control is available, continue to [Select and install the verified ZIP](#select-and-install-the-verified-zip).
+
+### If Local install is missing or greyed out
+
+The control was visible but disabled on the tested C.75 build. Developer options were already enabled. If **Local install** is missing altogether, first confirm the model, India firmware and Developer options, then look in the built-in **Software update → More options** menu. The offline workaround below was verified for the greyed-out control.
+
+1. Finish downloading and verifying the full ZIP first. Keep the USB connection to the Mac.
+2. Turn off **Wi-Fi** and **mobile data** on the phone. Leave both off while reopening the updater.
+3. In Settings, open **Apps → App management → Show system → Software update → Storage usage → Clear data**. This clears the built-in updater’s app data. Clearing its cache alone was not tested. If the system app is hard to find, open its App info directly over authorized USB:
+
+   ```sh
+   phone shell am start -a android.settings.APPLICATION_DETAILS_SETTINGS -d package:com.oplus.ota
+   ```
+
+4. Return to **Settings → About device → Software update → More options** while offline. On this phone the screen showed **No network connection** and **Local install** was selectable. If the control is still missing or disabled, record the build and screen before trying a different install method. [Observed menu and installer state](../02-updates/current/verification.json) · [OnePlus community guidance](https://community.oneplus.com/thread/2241561632796835845)
+
+### Select and install the verified ZIP
+
+Choose the full ZIP whose size and checksum you verified. The Mac copy was staged under **Downloads → adb-cadabra-restore**. The owner also started a download of the same release in OS Updater. In this run the agent gave the owner the manufacturer filename, `69a6c985451e47f78054a256ac54218d.zip`. The next recorded screen confirmed the target build. The exact file-picker path was unobserved. OS Updater’s guide directed this Indian A/B device to the built-in installer. [OS Updater on Google Play](https://play.google.com/store/apps/details?id=com.arjanvlek.oxygenupdater)
 
 Confirm the intended target on the native screen. Here it showed **CPH2745_17.0.1.201 | 8.66 GB**, while OS Updater’s download screen showed **8.87 GB** for the same filename and MD5. The owner selected **Install now**, waited for the installer and selected **Restart**. The update engine recorded successful filesystem verification and post-install. Let Android finish starting and the virtual A/B snapshot merge finish before proceeding. This run recorded `MergeCompleted` and the bootloader subsequently reported `snapshot-update-status: none`. [Installer, change log and merge evidence](../02-updates/current/verification.json)
 

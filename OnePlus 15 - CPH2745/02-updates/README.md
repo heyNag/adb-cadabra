@@ -2,21 +2,27 @@
 
 Update each component already on the phone to the latest compatible release on its installed channel. The live inventory determines the scope. Skip absent components. If the phone is stock, report that the rooted setup is absent and finish the update check. To install for the first time on a clean slate, use the [clean-slate installation guide](../01-root-and-reinstall/README.md).
 
-Use the **Latest on this channel** links in the [recorded rooted components](../01-root-and-reinstall/README.md#recorded-rooted-components) for components present in the live inventory. The [current verification](current/verification.json) provides a baseline. Keep Google Photos closed, leave automatic backup off, and preserve Tailscale’s sign-in and preferences.
+Use the top-level `device` and `current_state` fields for the present phone. `rooted_rebuild_baseline` and `factory_restore_check` record earlier states. Choose **Latest on this channel** for each component present in the live inventory. Keep Google Photos closed and preserve the current backup preference, Tailscale sign-in and settings. [Current verification](current/verification.json) · [Component channels and official downloads](../README.md#verified-setup-on-the-reference-phone)
 
 ## 1. Read the phone
 
-On the Mac, install Android SDK Platform-Tools for `adb` and have Python 3 available for the JSON checks. For APK updates, Android SDK Build-Tools supplies `apksigner`. The other Mac commands below use system tools. [Android Platform-Tools](https://developer.android.com/tools/releases/platform-tools) · [Python for macOS](https://www.python.org/downloads/macos/) · [Android Build-Tools](https://developer.android.com/tools/releases/build-tools)
+On the Mac, install Android SDK Platform-Tools for `adb` and have Python 3 available for the JSON checks. For APK updates, add the Android SDK Build-Tools directory containing `aapt2` and `apksigner` to `PATH`. The other Mac commands below use system tools. [Android Platform-Tools](https://developer.android.com/tools/releases/platform-tools) · [Python for macOS](https://www.python.org/downloads/macos/) · [Android Build-Tools](https://developer.android.com/tools/releases/build-tools)
 
-Run `adb devices -l` and set `PHONE_SERIAL` to the intended phone’s serial. These helpers target that phone. Pass only the fixed commands shown to `rootcmd`.
+Connect the phone over USB, unlock the screen and accept its debugging prompt for this Mac. Use the row marked `device` for the intended OnePlus when prompted. Keep these helpers in the same Terminal session. The `rootcmd` helper passes the commands shown here to the phone’s authorized Shell root grant.
 
 ```sh
+adb devices -l
+printf 'Serial of the authorized OnePlus: '
+read -r PHONE_SERIAL
 phone() { adb -s "${PHONE_SERIAL:?Set PHONE_SERIAL first}" "$@"; }
 rootcmd() { phone shell "su -c '$1'"; }
 vector() { rootcmd "/data/adb/modules/zygisk_vector/cli --json $*"; }
 tsctl() { rootcmd "sh /data/adb/modules/kernelsu-tailscaled/control.sh $1"; }
 
+phone get-state
 phone shell getprop ro.product.model
+phone shell getprop ro.product.name
+phone shell getprop ro.boot.flash.locked
 phone shell getprop ro.build.fingerprint
 phone shell getprop ro.boot.slot_suffix
 phone shell uname -r
@@ -31,8 +37,11 @@ For an established KernelSU setup, confirm **Working / LKM** and check the alrea
 
 ```sh
 rootcmd id
+rootcmd '/data/adb/ksud debug version'
 rootcmd '/data/adb/ksud module list'
 ```
+
+On the checked v3.3.1 installation, `ksud debug version` reads the **running kernel-side** KernelSU build, expected `32680`. Compare it independently with the Manager APK version and with the selected upstream release. [KernelSU v3.3.1 command implementation](https://github.com/tiann/KernelSU/blob/v3.3.1/userspace/ksud/src/cli.rs#L707-L710)
 
 Run the following checks only for components present in that inventory or installed Android packages. Check the manager APK and LKM versions separately. Run the PixelMask scope query only when both Vector and PixelMask are present.
 
@@ -80,7 +89,20 @@ mkdir -p "$RUN_BASE" &&
   printf '%s\n' "$UPDATE_DIR"
 ```
 
-Keep `UPDATE_DIR` for this update’s installers, settings exports and rollback files. Compare the downloaded size and local SHA-256 (`shasum -a 256 FILE`) with the published metadata. Verify any upstream signed checksum. For a ZIP, use `unzip -tq FILE`, inspect the installer, check its module ID and version code in `module.prop`, and validate its bundled checksum manifest when present. For an APK, run Android SDK `apksigner verify --print-certs FILE`, check the package and version code, and compare its signing identity with the installed APK, accounting for a verified signing-key rotation.
+Keep `UPDATE_DIR` for this update’s installers, settings exports and rollback files. Compare the downloaded size and local SHA-256 (`shasum -a 256 FILE`) with the published metadata. Verify any upstream signed checksum. For a ZIP, use `unzip -tq FILE`, inspect the installer, read its ID and version code with `unzip -p FILE module.prop`, and validate its bundled checksum manifest when present. For APKs, use the following identity check for each update. Set `PACKAGE` to the intended installed package (`me.weishu.kernelsu` or `com.kinginu.pixelmask`) and `APK` to the absolute path of the checksum-verified candidate. The installed base APK supplies the signing certificate for comparison.
+
+```sh
+set -o pipefail
+base_apk=$(phone shell pm path --user 0 "${PACKAGE:?Select the installed package}" |
+  tr -d '\r' | sed -n 's/^package:\(.*\/base\.apk\)$/\1/p')
+[ -n "$base_apk" ] &&
+  phone pull "$base_apk" "$UPDATE_DIR/$PACKAGE-installed-base.apk" &&
+  apksigner verify --print-certs "$UPDATE_DIR/$PACKAGE-installed-base.apk" &&
+  apksigner verify --print-certs "${APK:?Select the verified candidate APK}" &&
+  aapt2 dump badging "$APK" | sed -n '/^package:/p'
+```
+
+Require the intended package and eligible version code in `package:`, both APKs to verify, and matching signer certificate SHA-256 digests. If a new signing key appears, verify the upstream rotation and accepted signing lineage before replacing the APK. Android’s in-place update also enforces package signing compatibility. [Android APK verification](https://developer.android.com/tools/apksigner) · [Android app signing](https://developer.android.com/studio/publish/app-signing)
 
 ### Temporary Vector settings export
 
@@ -113,17 +135,38 @@ export_vector_settings() {
 export_vector_settings
 ```
 
-Proceed after the export succeeds, both hashes match and SQLite reports `ok`. Record the framework build and schema together for rollback. The snapshot contains the settings at export time. Preserve any custom bindhosts lists separately when updating bindhosts, and leave Tailscale’s private state on the phone.
+Proceed after the export succeeds, both hashes match and SQLite reports `ok`. Record the framework build and schema together for rollback. Also save the output of `vector modules ls` and `vector scope ls com.kinginu.pixelmask` when that add-on is installed. The snapshot contains the settings at export time. Preserve any custom bindhosts lists separately when updating bindhosts, and leave Tailscale’s private state on the phone.
 
 ## 4. Apply and verify
 
-- **Module ZIPs.** Confirm that the candidate’s module ID already exists in the live inventory, then update it in place. Create an empty staging directory with `phone shell mktemp -d /data/local/tmp/ksu-update.XXXXXX`. Push the ZIP there and compare `phone shell sha256sum REMOTE_ZIP` with the verified local digest. Then run `rootcmd '/data/adb/ksud module install REMOTE_ZIP'`. Replace `REMOTE_ZIP` with the actual absolute path in both commands. Keep the configuration snapshot and any rollback installer in temporary staging until the new build runs.
-- **APKs and kernel root.** Confirm the package is present with `phone shell pm path PACKAGE`, replace it in place with the verified APK using `phone install -r FILE`, and re-read its version. A manager APK update alone leaves the running LKM unchanged. For an existing LKM update, verify a stock recovery image for the current firmware and slot before using the official KernelSU release’s supported upgrade procedure. Keep the existing bootloader state and user data. [Extract and verify the matching stock image](../01-root-and-reinstall/README.md#2-select-a-matching-image) · [Official KernelSU instructions](https://kernelsu.org/guide/installation.html)
-- **Standalone engine.** With an integration that supports independent updates, run `tsctl engine-check`, then `tsctl engine-prepare`. Confirm the staged version and verified package, run `tsctl engine-apply`, then `tsctl engine-status`. The service restarts during application.
-- **Activation.** Reboot only when the selected update needs boot-time activation. For a required reboot, use `phone reboot`. Check `adb devices -l` and `phone shell getprop sys.boot_completed` every five seconds for up to three minutes. Require a new boot ID, boot completion `1`, root and Enforcing SELinux. For a service-only update, check the restarted service directly.
-- **Read back.** Repeat the checks from step 1 for the components that were present. For the installed loader and its dependents, check loader status with `rootcmd '/data/adb/modules/zygisksu/bin/zygiskd status'`, Vector’s running build, and PixelMask’s enablement and scope. For bindhosts, compare the addresses printed by `phone shell ping -c 1 -W 2 doubleclick.net` and the same command for `example.com`. The blocked domain should resolve to the configured sink and the control to a public address. Confirm Tailscale’s running engine, backend and preferences against the baseline. If installation times out, inspect staged and running versions before retrying. If rollback is needed, follow the component’s supported recovery procedure using the exact previous release and compatible configuration. Restore a Vector database only after the matching framework build is running.
+**Module ZIPs.** Confirm the candidate’s `module.prop` ID matches one in the current inventory. Set `MODULE_ZIP` to the verified archive’s absolute path on the Mac. For each update, stage the archive and compare the two hashes before running the native installer.
 
-After verifying the running state, refresh the [current device inventory](../README.md#installed-on-your-oneplus-15) with the installed versions and sources. If the verified setup becomes the target for future rebuilds, refresh its [component table](../01-root-and-reinstall/README.md#recorded-rooted-components) as well. Refresh [current verification](current/verification.json) with the observed results. Once verification or rollback is complete, remove this update run directory and the task-owned files staged on the phone after completing the export cleanup below.
+```sh
+MODULE_STAGE=$(phone shell mktemp -d /data/local/tmp/ksu-update.XXXXXX) &&
+  PHONE_ZIP="$MODULE_STAGE/candidate.zip" &&
+  phone push "${MODULE_ZIP:?Select the verified module ZIP}" "$PHONE_ZIP" &&
+  shasum -a 256 "$MODULE_ZIP" &&
+  phone shell sha256sum "$PHONE_ZIP"
+```
+
+When the hashes match, run `rootcmd "/data/adb/ksud module install $PHONE_ZIP"` and require installer success. Keep this staging directory’s path through activation. If several ZIPs have updates, record each directory; apply dependency changes in the compatible order documented by the releases (Zygisk Next before its Vector loader module).
+
+**Manager or add-on APK.** After the package and signer checks above, update in place with `phone install -r "$APK"`. Require `Success` and read the installed package version again. If PixelMask requires a newer Vector, verify the new framework has loaded before updating the add-on.
+
+**KernelSU LKM.** An updated Manager and the previous LKM can have different versions until the phone reboots. When the live LKM also needs an update, confirm the phone is already rooted and unlocked, check its current slot, fingerprint and KMI, and obtain the authenticated stock `init_boot.img` for that exact build as the recovery image. In the compatible Manager open the install icon → **Direct install** for the active slot and review the patch/write log before rebooting. The inactive-slot operation is a separate OTA workflow. After boot, require **Working / LKM**, the expected build from `rootcmd '/data/adb/ksud debug version'`, the original slot/fingerprint, and the authorized UID 0. [Matching stock image](../01-root-and-reinstall/README.md#2-select-a-matching-image) · [KernelSU’s Direct install procedure](https://kernelsu.org/guide/installation.html#use-the-manager)
+
+**Standalone Tailscale engine.** Run `tsctl engine-check`, then `tsctl engine-prepare`. Verify the reported staged version is the intended release. Run `tsctl engine-apply`, then `tsctl engine-status`. Verify the running version changed and the staging field is empty. The service restarts during application. Compare `status-json` with the original mode, preferences and sign-in state. The tested baseline is native and enabled with `NeedsLogin`. A logged-in phone should return to its original backend state. [Stable integration engine transaction](https://github.com/WayneShao/KernelSU-Tailscaled/blob/v2.0.5/tailscale/scripts/engine-update.sh)
+
+- **Activation.** Reboot only when the selected update needs boot-time activation. For a required reboot, use `phone reboot`. Check `adb devices -l` and `phone shell getprop sys.boot_completed` every five seconds for up to three minutes. Require a new boot ID, boot completion `1`, root and Enforcing SELinux. For a service-only update, check the restarted service directly.
+- **Read back.** Repeat the checks from step 1 for the components that were present. For the installed loader and its dependents, check loader status with `rootcmd '/data/adb/modules/zygisksu/bin/zygiskd status'`, Vector’s running build, and PixelMask’s enablement and scope. For bindhosts, compare the addresses printed by `phone shell ping -c 1 -W 2 doubleclick.net` and the same command for `example.com`. The blocked domain should resolve to the configured sink and the control to a public address. Confirm Tailscale’s running engine, backend and preferences against the baseline. If installation times out, inspect staged and running versions before retrying.
+
+### Recover a failed update
+
+- **Module regression or boot loop.** If authorized ADB root is available, inspect `rootcmd '/data/adb/ksud module list'` and disable the affected ID with KernelSU Manager or `/data/adb/ksud module disable ID` in the root shell. Reboot and verify the cause. If Android cannot finish booting after a module update, KernelSU documents repeatedly pressing and releasing Volume Down shortly after the first boot screen to enter its safe mode, which disables modules. Restore the compatible previous release and settings before re-enabling affected modules. If the LKM image write caused the first boot to fail, use the saved matching stock image and recheck the exact original flash target through the clean-install recovery instructions. [KernelSU module rescue](https://kernelsu.org/guide/rescue-from-bootloop.html) · [Recover the original boot image](../01-root-and-reinstall/README.md#recover-a-failed-first-boot)
+- **Vector settings.** If the intended scope/settings changed and a rollback is required, bring the matching framework build and its CLI back first. For the snapshot created in this update, recheck both hashes and `PRAGMA integrity_check` as above, compare the saved schema to the running framework, and confirm this is the intended pre-update configuration. Then run `vector db restore "$VECTOR_PHONE_DB"` and require JSON `success: true`. If the temporary phone copy is gone, recreate it in a new private staging directory from the verified Mac copy first. Read back `vector status`, the add-on list and the **entire scope** against the pre-update readback. [Upstream Vector backup and restore implementation](https://github.com/JingMatrix/Vector/blob/canary-3119/daemon/src/main/kotlin/org/matrix/vector/daemon/ipc/CliHandler.kt#L211-L244)
+- **Tailscale engine failure.** Re-read `engine-status` and `status-json` before taking further action. The v2.0.5 integration maintains its own recovery journal for a failed apply and rejects engine downgrades. Preserve its state and diagnostics when the previous service does not recover. [Engine recovery implementation](https://github.com/WayneShao/KernelSU-Tailscaled/blob/v2.0.5/tailscale/scripts/engine-update.sh#L85-L145)
+
+After verifying the running state, refresh the [current device inventory](../README.md#verified-setup-on-the-reference-phone) with the installed versions and sources. Refresh [current verification](current/verification.json) with the observed results. After verifying the update or completing rollback, clean up the task-owned phone staging. For each recorded module upload run `phone shell rm -f "$PHONE_ZIP"` and `phone shell rmdir "$MODULE_STAGE"` using the corresponding paths from this session. Complete any Vector export cleanup below before removing this Mac run directory.
 
 If you ran the Vector export, remove only that session’s temporary database and empty directories after verification or rollback. No database belongs in the workspace.
 
