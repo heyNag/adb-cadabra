@@ -18,23 +18,10 @@
     "init.svc.zygote": "running"
   },
   "current_state": {
-    "checked_at": "2026-11-21T17:24:23+07:00",
-    "reset_and_initial_setup": "Owner confirmed the lock/erase prompt, restart and first Hello ColorOS 17 screen.",
-    "current_screen": "Owner subsequently completed setup without Google sign-in and reached Android Home.",
-    "device_provisioned": 1,
-    "post_wipe_avb_digest_matches_signed_c80": true,
-    "selinux": "Enforcing",
-    "kernel": "6.12.69-android16-6-g5fd39602326e-ab16372235-4k",
-    "new_boot_id": "0eaf4c47-0cc8-421e-9473-419a818f1db3",
-    "shell_uid": 2000,
-    "su_in_shell_path": false,
-    "kernelsu_module_in_proc_modules": false,
-    "packages_checked_for_user_0": {
-      "package_service": "found",
-      "me.weishu.kernelsu": "No installed path, exit 1.",
-      "com.kinginu.pixelmask": "No installed path, exit 1."
-    },
-    "usb_debugging": "Owner temporarily enabled USB debugging and authorized the Mac for this post-wipe read."
+    "phase": "Bootloader unlock confirmed on the phone. Waiting for post-wipe Android to authorize the Mac.",
+    "last_observation": "Owner confirmed restart with orange-state warning after the single unlock request.",
+    "last_adb_reading": "The top-level device values are the last authorized Android measurements, taken before the unlock.",
+    "kernelsu_rebuild": "Patch prepared and verified on Mac. Root and modules pending live verification."
   },
   "rooted_rebuild_baseline": {
     "root": "uid=0(root) gid=0(root) groups=0(root) context=u:r:ksu:s0",
@@ -446,7 +433,84 @@
       "left_bootloader_by": "2026-11-21T17:20:43+07:00",
       "post_reset_setup_screen": "Owner observed Hello ColorOS 17 after the restart.",
       "post_reset_setup_progress": "Owner continued from Hello through setup and reached Android Home.",
-      "post_reset_android_verification": "Verified over newly authorized ADB at 17:24:23. The live device and current_state fields record the locked, green Android boot and exact C.80 fingerprint and AVB digest."
+      "post_reset_android_verification": "Verified over newly authorized ADB at 17:24:23 on 2026-11-21. The post_wipe_readings below capture the locked, green Android boot before the next clean rebuild.",
+      "post_wipe_readings": {
+        "device": {
+          "ro.product.model": "CPH2745",
+          "ro.build.version.release": "17",
+          "ro.build.display.id": "CPH2745_17.0.1.201(EX01)",
+          "ro.build.fingerprint": "OnePlus/CPH2745IN/OP611FL1:17/CP2A.260605.016/B.R4T3.50a3663-29f0eba-29fce1c:user/release-keys",
+          "ro.boot.slot_suffix": "_a",
+          "ro.boot.flash.locked": "1",
+          "sys.boot_completed": "1",
+          "ro.boot.vbmeta.device_state": "locked",
+          "ro.boot.verifiedbootstate": "green",
+          "ro.boot.veritymode": "enforcing",
+          "ro.build.version.security_patch": "2026-11-01",
+          "ro.boot.vbmeta.digest": "b3a36735edddc817c5e7c14a05f2bda6935ab3c7d92b56632251ccb78f65b2c3",
+          "ro.product.name": "CPH2745IN",
+          "ro.boot.vbmeta.hash_alg": "sha256",
+          "init.svc.bootanim": "stopped",
+          "init.svc.zygote": "running"
+        },
+        "checks": {
+          "checked_at": "2026-11-21T17:24:23+07:00",
+          "reset_and_initial_setup": "Owner confirmed the lock/erase prompt, restart and first Hello ColorOS 17 screen.",
+          "current_screen": "Owner subsequently completed setup without Google sign-in and reached Android Home.",
+          "device_provisioned": 1,
+          "post_wipe_avb_digest_matches_signed_c80": true,
+          "selinux": "Enforcing",
+          "kernel": "6.12.69-android16-6-g5fd39602326e-ab16372235-4k",
+          "new_boot_id": "0eaf4c47-0cc8-421e-9473-419a818f1db3",
+          "shell_uid": 2000,
+          "su_in_shell_path": false,
+          "kernelsu_module_in_proc_modules": false,
+          "packages_checked_for_user_0": {
+            "package_service": "found",
+            "me.weishu.kernelsu": "No installed path, exit 1.",
+            "com.kinginu.pixelmask": "No installed path, exit 1."
+          },
+          "usb_debugging": "Owner temporarily enabled USB debugging and authorized the Mac for this post-wipe read."
+        }
+      }
+    }
+  },
+  "clean_rebuild": {
+    "starting_state": "Indian stock C.80 Android 17, slot A, locked and green.",
+    "kernel_kmi": "android16-6.12",
+    "manager": {
+      "version": "3.3.1",
+      "build": 32680,
+      "channel": "stable",
+      "apk_sha256": "b4a059ace71de2fa65cc7f12b1c58d55fc23ab25e057ee4230ce779742abe450"
+    },
+    "stock_init_boot": {
+      "bytes": 8388608,
+      "sha256": "cf870b50cf44845c5e9070afe7a13188aa5a13efc1bc7cddb42f49f217074420",
+      "mac_image_matches_authenticated_target": true
+    },
+    "patched_init_boot": {
+      "name": "kernelsu_patched_20261121_103918.img",
+      "bytes": 8388608,
+      "sha256": "42ed7c095551a6a94a395d3d9c28b493b20779c3a52e4ffc256a864a11b158f1",
+      "phone_and_mac_match": true
+    },
+    "before_unlock": {
+      "product": "canoe",
+      "is-userspace": "no",
+      "current-slot": "a",
+      "unlocked": "no",
+      "secure": "yes",
+      "partition-size:init_boot_a": "0x800000",
+      "slot-successful:a": "yes",
+      "slot-unbootable:a": "no",
+      "snapshot-update-status": "none",
+      "get_unlock_ability": 1
+    },
+    "unlock": {
+      "request_count": 1,
+      "fastboot_reply": "OKAY [  0.010s]",
+      "owner_observation": "Confirmed the wipe, restart and orange unlocked-boot warning."
     }
   }
 }

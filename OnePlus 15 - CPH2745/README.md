@@ -10,7 +10,9 @@
 
 ## Installed on your OnePlus 15
 
-**Factory restore verified on November 21, 2026.** This Indian OnePlus 15 runs official Android 17 build `CPH2745_17.0.1.201(EX01)` on slot A. Android reported a locked bootloader and green Verified Boot. Its AVB digest matches the signed OnePlus India C.80 archive. The owner accepted the lock and erase, saw **Hello ColorOS 17**, then completed setup without Google sign-in and reached Home. The post-wipe check found no KernelSU runtime, KernelSU Manager or PixelMask in the owner profile. [Step-by-step C.75-to-C.80 factory restore](03-restore-to-stock/README.md) · [Fastboot checks and the physical lock prompt](03-restore-to-stock/README.md#from-running-android-to-the-bootloader-menu) · [Restore measurements and current state](02-updates/current/verification.json)
+**Clean rebuild in progress, November 21, 2026.** The last authorized Android read showed stock Indian C.80 `CPH2745_17.0.1.201(EX01)` on slot A. KernelSU Manager generated a matching patch, and the owner confirmed the bootloader unlock and observed the orange warning. Installation of root and modules still needs verification after setup. [Clean install](01-root-and-reinstall/README.md) · [Rebuild measurements](02-updates/current/verification.json)
+
+The earlier factory restore on this handset produced a locked, green C.80 boot and **Hello ColorOS 17**. [Step-by-step C.75-to-C.80 factory restore](03-restore-to-stock/README.md) · [Fastboot checks and the physical lock prompt](03-restore-to-stock/README.md#from-running-android-to-the-bootloader-menu)
 
 For the previous rooted setup, the [clean rebuild guide](01-root-and-reinstall/README.md#recorded-rooted-components) records the component versions, channels, original sources and settings.
 

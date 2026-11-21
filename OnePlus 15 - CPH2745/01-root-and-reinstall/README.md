@@ -75,7 +75,7 @@ curl --fail --location --proto '=https' --proto-redir '=https' --output "$asset"
   printf '%s  %s\n' "$EXPECTED_SHA256" "$asset" | shasum -a 256 -c -
 ```
 
-Select the official release APK for KernelSU Manager (package `me.weishu.kernelsu`). After checksum verification set `KSU_APK="$asset"` and run `phone install "$KSU_APK"`. Open KernelSU and confirm the phone supports the LKM installation route. The boot component will be installed after the manager patches the matching image.
+Select the official release APK for KernelSU Manager (package `me.weishu.kernelsu`). After checksum verification set `KSU_APK="$asset"` and run `phone install "$KSU_APK"`. On the locked C.80 phone, OnePlus showed its installer scan while `adb install` was still waiting. Verify the app name and version, read the scan result, then choose **Continue installation** when it reports **No risks found**. Wait for the Mac to report `Success`. Open KernelSU and confirm the phone supports the LKM installation route. The boot component will be installed after the manager patches the matching image.
 
 ### Recorded rooted components
 
@@ -97,13 +97,21 @@ For a fresh download, use **Latest on this channel**. **Where we installed it fr
 
 ## 2. Select a matching image
 
-The C.75 stock and patched images in this guide are specific to that earlier build. For a subsequent C.80 reroot, first verify the running build and active slot, extract fresh C.80 `init_boot.img` from the matching authenticated India package, then generate a new patch. The [current verification](../02-updates/current/verification.json) records the checked C.80 stock image size and SHA-256.
+**Start with the build on the phone.** On November 21, 2026, the Indian handset started the clean rebuild on stock `CPH2745_17.0.1.201(EX01)` (C.80), Android 17, slot A, locked with green Verified Boot. Its kernel was `6.12.69-android16-6-g5fd39602326e-ab16372235-4k`. The device uses a separate `init_boot` ramdisk. For LKM on this layout, use the stock `init_boot.img` from the running firmware and generate a fresh patch. Keep the matching stock image on the Mac for recovery. [KernelSU installation](https://kernelsu.org/guide/installation.html) · [Handset and signed firmware measurements](../02-updates/current/verification.json)
 
-The three recorded stock images (`init_boot`, `boot`, `vbmeta`) come from the same OnePlus India OTA. **Only `init_boot.img` is needed for this phone’s ramdisk-based LKM root or its reversal.** The recorded target is CPH2745 / CPH2745IN, Android 17 build `CPH2745_17.0.0.102(EX01)`, kernel family `android16-6.12`, slot B. For that firmware, compare section 1’s live values with the table below. A fresh phone can ship on a different build or slot. Match its own OTA, kernel compatibility and boot partition layout, and determine the write target from the slot actually reported by the phone. [Firmware identity and OTA source](kit/firmware-identification.json) · [Known image SHA-256 digests](kit/IMAGE-SHA256SUMS) · [KernelSU installation and compatibility](https://kernelsu.org/guide/installation.html)
+For the C.80 case, use the [India full-package download and signer checks](../03-restore-to-stock/verify-ota.md). A private Mac run from a previous restore may already contain the official ZIP. Reuse it once you have matched its identity to the running phone, checked its digest against the authenticated record, and extracted a new stock image into the current install run. Set `OTA` to that verified ZIP. When downloading from scratch into this run, set `RESTORE_DIR=$DOWNLOAD_DIR` for the verifier. For a different installed build, obtain and authenticate its own full India archive. The flash target is always determined again from the live slot.
 
-**Obtain the matching package.** For the recorded phone, select **OnePlus 15 India CPH2745**, full OTA **CPH2745_17.0.0.102(EX01)**, OTA ID **CPH2745_11.C.75_1750_202610181120**. Use the archive entry’s **官方链接** (official link) as the manufacturer link to resolve with the [firmware download instructions](../03-restore-to-stock/README.md#get-the-latest-full-indian-firmware). On November 21, 2026 a fresh link served this archive from `gauss-compota-c-in.allawnofs.com`. The old unsigned URL returns HTTP 403. For any other running build, select its own matching archive. Verify the package and extracted stock image before writing a boot partition. [C.75 archive entry](https://yun.daxiaamu.com/OnePlus_Roms/%E4%B8%80%E5%8A%A0OnePlus%2015/ColorOS%20CPH2745_17.0.0.102%28EX01%29%20C.75/) · [OnePlus India software support](https://www.oneplus.in/support/softwareupgrade) · [Recorded firmware identity](kit/firmware-identification.json)
+| Checked field | Indian C.80 value |
+|---|---|
+| OTA identity | `CPH2745_11.C.80_1800_202610290517` |
+| Product / device | `CPH2745IN` / `OP611FL1` |
+| Full OTA size / SHA-256 | 9,301,191,889 bytes / `c7ebbcf62c64895ec9c49fe0988b6f0b40a682d95b5c8a310457afb67de5d9db` |
+| Stock `init_boot.img` size / SHA-256 from signed manifest | 8,388,608 bytes / `cf870b50cf44845c5e9070afe7a13188aa5a13efc1bc7cddb42f49f217074420` |
+| Full target fingerprint | `OnePlus/CPH2745IN/OP611FL1:17/CP2A.260605.016/B.R4T3.50a3663-29f0eba-29fce1c:user/release-keys` |
 
-**Verify before extracting.** Set `OTA` to the absolute path of the acquired ZIP. Run `unzip -p "$OTA" META-INF/com/android/metadata`. Match `pre-device` and the full `post-build` fingerprint. Cross-check the OnePlus product, display version and OTA ID in the accompanying vendor metadata or official package listing. The recorded target values are:
+**Earlier C.75 build only.** If the running phone reports C.75, select **OnePlus 15 India CPH2745**, full OTA **CPH2745_17.0.0.102(EX01)**, OTA ID **CPH2745_11.C.75_1750_202610181120**. Use the archive entry’s **官方链接** (official link) as the manufacturer link to resolve with the [firmware download instructions](../03-restore-to-stock/README.md#get-the-latest-full-indian-firmware). On November 21, 2026 a fresh link served this archive from `gauss-compota-c-in.allawnofs.com`. The old unsigned URL returns HTTP 403. For any other running build, select its own matching archive. Verify the package and extracted stock image before writing a boot partition. [C.75 archive entry](https://yun.daxiaamu.com/OnePlus_Roms/%E4%B8%80%E5%8A%A0OnePlus%2015/ColorOS%20CPH2745_17.0.0.102%28EX01%29%20C.75/) · [OnePlus India software support](https://www.oneplus.in/support/softwareupgrade) · [Recorded firmware identity](kit/firmware-identification.json)
+
+**Verify before extracting.** Set `OTA` to the absolute path of the acquired ZIP. Run `unzip -p "$OTA" META-INF/com/android/metadata`. Match `pre-device` and the full `post-build` fingerprint. Cross-check the OnePlus product, display version and OTA ID in the accompanying vendor metadata or official package listing. The following table describes the earlier C.75 example:
 
 | OTA field | Required value |
 |---|---|
@@ -122,7 +130,7 @@ command -v payload-dumper-go
 payload-dumper-go -h
 ```
 
-For a newer build, require the OTA’s embedded product/device and full target fingerprint to match the actual phone from section 1. The table above describes only the recorded build. Allow space for the full ZIP and extracted payload (about 9.24 GB each for that build), plus the selected images. Choose a build-labelled subdirectory for the images. The following block derives its name from the package’s verified display build and checks it against the selected phone. Keep that directory through recovery and verification.
+For every build, require the OTA’s embedded product/device and full target fingerprint to match the actual phone from section 1. Allow space for the full ZIP and the selected images. The upstream extractor reads the payload directly from the archive. Choose a build-labelled subdirectory for the images. The following block derives its name from the package’s verified display build and checks it against the selected phone. Keep that directory through recovery and verification.
 
 ```sh
 STOCK_DIR=$(python3 - "$OTA" "$DOWNLOAD_DIR" "$(phone shell getprop ro.build.display.id)" <<'PY'
@@ -144,16 +152,20 @@ PY
 After the printed directory matches the installed build, extract the stock image.
 
 ```sh
-unzip -p "$OTA" payload.bin > "$DOWNLOAD_DIR/payload.bin" &&
-  payload-dumper-go -p init_boot -o "$STOCK_DIR" "$DOWNLOAD_DIR/payload.bin"
+payload-dumper-go -p init_boot -o "$STOCK_DIR" "$OTA"
 ```
 
-Keep the extractor’s source and output hash verification enabled. For the recorded **C.75 build only**, check that the complete stock image is 8,388,608 bytes and that its full SHA-256 matches the OnePlus reference. Require an `OK` result.
+Keep the extractor’s output hash verification enabled. For these two recorded builds, use the fingerprint-matched image and its own manifest digest. Require the printed checksum to report `OK`.
 
 ```sh
 stock_image="$STOCK_DIR/init_boot.img"
+case "$(phone shell getprop ro.build.display.id)" in
+  'CPH2745_17.0.1.201(EX01)') image_sha=cf870b50cf44845c5e9070afe7a13188aa5a13efc1bc7cddb42f49f217074420 ;;
+  'CPH2745_17.0.0.102(EX01)') image_sha=8910c3ce57893273120434866ef29a436771ae931290e83156807153c8936002 ;;
+  *) unset image_sha ;;
+esac
 [ "$(stat -f '%z' "$stock_image")" = 8388608 ] &&
-  printf '%s  %s\n' 8910c3ce57893273120434866ef29a436771ae931290e83156807153c8936002 "$stock_image" |
+  printf '%s  %s\n' "${image_sha:?Use the matching signed manifest for this firmware}" "$stock_image" |
   shasum -a 256 -c -
 ```
 
@@ -167,10 +179,12 @@ od -An -tx1 -j 40 -N 4 "$stock_image"
 
 For another firmware, use its own payload manifest’s expected partition size and hash. Check `stat -f '%z' "$STOCK_DIR/init_boot.img"` and `shasum -a 256 "$STOCK_DIR/init_boot.img"` against those values. A source-dependent operation requires the matching base image or a suitable full package. To obtain all three stock images, select `-p init_boot,boot,vbmeta`. [C.75 image checksums](kit/IMAGE-SHA256SUMS) · [Extractor flags](https://github.com/ssut/payload-dumper-go/blob/2.1.0/cmd/root.go)
 
+**Before unlocking a stock phone.** Steps 1–3 below create a file while Android still has its original USB authorization. Copy the successful patch to this run on the Mac before the bootloader unlock wipes the phone. Keep the Manager APK and both images there. After the wipe, reauthorize USB and compare the new live fingerprint, kernel and active slot again before flashing. A change of firmware requires new matching inputs.
+
 **Prepare the image to flash.** Generate a fresh patch from the verified stock image with the selected official KernelSU manager:
 
-1. Run `phone push "$STOCK_DIR/init_boot.img" /sdcard/Download/init_boot.img`. Confirm `phone shell sha256sum /sdcard/Download/init_boot.img` matches the verified stock digest.
-2. In KernelSU choose **Select a file and patch**, select the verified stock file, and confirm the detected kernel family. Read the completed patch log and set `PATCH_ON_PHONE` to its exact output path. This step creates a file.
+1. Create a dedicated folder under the phone’s Downloads, for example `PHONE_DIR=/sdcard/Download/adb-cadabra-install-CPH2745-C80` for this run. Run `phone shell mkdir -p "$PHONE_DIR"`, `phone push "$STOCK_DIR/init_boot.img" "$PHONE_DIR/init_boot.img"`, and `phone shell sha256sum "$PHONE_DIR/init_boot.img"`. Require the checksum from the signed firmware.
+2. In KernelSU choose the install icon → **Select a file**. In the system picker, open **OnePlus 15 → Download → adb-cadabra-install-CPH2745-C80 → init_boot.img**. The Downloads shortcut showed an empty listing in this run. In the kernel selector, compare the detected **KMI** (kernel module interface) with `phone shell uname -r`. On this **Android 17** phone the running kernel was `6.12.69-android16-6-…`, and the correct selection in KernelSU was **android16-6.12**. The Android version in this label identifies the kernel branch used to build the module. Leave the matching selection in place. Confirm the patch and wait for the log to report unpacking, adding the KernelSU LKM, repacking, an output path, and **Done**. Set `PATCH_ON_PHONE` to that exact path.
 3. Set `PATCH_TO_FLASH="$DOWNLOAD_DIR/${PATCH_ON_PHONE##*/}"`, then run `phone pull "$PATCH_ON_PHONE" "$PATCH_TO_FLASH"`. Compare `phone shell sha256sum "$PATCH_ON_PHONE"` with `shasum -a 256 "$PATCH_TO_FLASH"`. Require identical hashes, a file length matching the intended partition, and a successful patch log. A newly generated patch has its own digest. Use its actual filename and hash even when the same KernelSU release was used before. Keep the verified stock image accessible on the Mac through the first boot.
 
 ## 3. Unlock only if required, then verify the write target
@@ -203,7 +217,13 @@ fb getvar unlocked
 fb getvar "partition-size:$ROOT_PARTITION"
 ```
 
-Require the same serial, the expected OnePlus bootloader product, `is-userspace: no`, a fastboot slot matching the Android slot, and sufficient verified partition size. Compare the reported hex size with the byte lengths of the matching stock and patched images (`wc -c`). For the recorded layout the product was `canoe`, slot `b`, size `0x800000` (8 MiB). If the bootloader is **locked** and the owner specifically requested rooting with the required wipe, require OEM unlocking enabled and `fb flashing get_unlock_ability` reporting `1`. Then run `fb flashing unlock` and have the owner confirm the reset on the phone. After setup, reauthorize USB debugging, recheck the Android identity, recalculate the target partition and repeat the bootloader queries. A phone reporting **`unlocked: yes`** already meets the unlock requirement.
+Require the same USB serial, `product: canoe`, `is-userspace: no`, the same slot Android reported and a partition size matching both image lengths. On the recorded C.80 rebuild the target was `init_boot_a`, `partition-size:init_boot_a` was `0x800000` (8 MiB), `unlocked` was `no` and `secure` was `yes`. Slot A was successful and bootable, and `snapshot-update-status` was `none`. On the older C.75 run the target was on B. Leave slot selection to the verified boot state.
+
+**Unlock a locked phone with an owner-approved wipe.** Check `fb flashing get_unlock_ability`. This C.80 phone returned `1` after the owner-authorized OEM unlocking setting was confirmed on in Developer options. A zero or unsupported response needs investigation before continuing.
+
+1. With the phone in the confirmed bootloader, run `fastboot -s "$PHONE_SERIAL" flashing unlock` **once**. The C.80 handset acknowledged the request with `OKAY [  0.010s]`. Check the confirmation on the phone.
+2. On the handset, the **owner** uses the volume keys to highlight **UNLOCK THE BOOTLOADER**, then presses and releases **Power once**. This confirms the data wipe. Keep USB connected through the restart. If a different prompt appears, have the owner report its wording before making a selection.
+3. After first-time setup, re-enable **Developer options → USB debugging** and approve the Mac. Repeat the checks in section 1 on the same USB serial. Verify the fingerprint, kernel and slot against the saved patch inputs. Recalculate `ROOT_PARTITION` from the new reading and re-enter the bootloader. Require `unlocked: yes` and recheck product, mode, slot and size. A handset already reporting `unlocked: yes` skips the unlock and its wipe.
 
 With all those checks passing and **`unlocked: yes`**, write the verified patched file from section 2 to the one confirmed active partition.
 
