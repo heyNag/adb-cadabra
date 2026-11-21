@@ -2,7 +2,7 @@
 
 Update each component already on the phone to the latest compatible release on its installed channel. The live inventory determines the scope. Skip absent components. If the phone is stock, report that the rooted setup is absent and finish the update check. To install for the first time on a clean slate, use the [clean-slate installation guide](../01-root-and-reinstall/README.md).
 
-Use the top-level `device` and `current_state` fields for the present phone. `rooted_rebuild_baseline` and `factory_restore_check` record earlier states. Choose **Latest on this channel** for each component present in the live inventory. Keep Google Photos closed and preserve the current backup preference, Tailscale sign-in and settings. [Current verification](current/verification.json) · [Component channels and official downloads](../README.md#verified-setup-on-the-reference-phone)
+Use the top-level `device` and `current_state` fields for the present phone. `rooted_rebuild_baseline` and `factory_restore_check` record earlier states. Choose **Latest on this channel** for each component present in the live inventory. For a version check, keep Google Photos closed. To verify PixelMask inside Photos after an update, use the [runtime check](../01-root-and-reinstall/README.md#restore-and-verify-the-pixelmask-scope) with the existing scope. Preserve the current backup preference, Tailscale sign-in and settings. [Current verification](current/verification.json) · [Component channels and official downloads](../README.md#verified-setup-on-the-reference-phone)
 
 ## 1. Read the phone
 

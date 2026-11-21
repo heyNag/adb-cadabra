@@ -92,6 +92,10 @@
     ],
     "vector_scope": [
       {
+        "APP_PACKAGE": "com.google.android.apps.photos",
+        "USER_ID": 0
+      },
+      {
         "APP_PACKAGE": "com.kinginu.pixelmask",
         "USER_ID": 0
       }
@@ -127,9 +131,16 @@
         "web": "running"
       }
     },
-    "scope_note": "PixelMask is enabled in Vector only for its own Android package, user 0. This differs from its previous Photos scope. Google Photos stayed closed. Tailscale remains signed out.",
+    "scope_note": "PixelMask is enabled for its own app and Google Photos for Android user 0, matching the pre-reset Vector scope.",
     "launcher_after_handoff": "com.android.launcher/.Launcher",
-    "vector_auto_include_rules": 0
+    "vector_auto_include_rules": 0,
+    "pixelmask_runtime_check": {
+      "checked_on": "2026-11-21",
+      "timezone": "Asia/Bangkok",
+      "method": "Appended the missing Google Photos target, read back the full Vector scope and enabled module, restarted Google Photos into a new process, then read PixelMask Home.",
+      "home_status": "Active in Google Photos",
+      "home_detail": "Spoofing as Pixel · Photos 7.86.0.956040398 · just now"
+    }
   },
   "rooted_rebuild_baseline": {
     "root": "uid=0(root) gid=0(root) groups=0(root) context=u:r:ksu:s0",
