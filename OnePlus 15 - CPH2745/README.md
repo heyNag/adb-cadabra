@@ -12,7 +12,9 @@
 
 ## Verified setup on the reference phone
 
-**Original root setup checked November 21, 2026 at 17:56 Bangkok time.** The Indian OnePlus 15 runs Android 17 `CPH2745_17.0.1.201(EX01)` (C.80) on slot A, with the bootloader unlocked, KernelSU working in LKM mode, and SELinux enforcing. The authorized ADB shell returned UID 0. The original seven components matched their upstream release channels at that check. The two Wi-Fi tools were installed later the same day from their maintainers’ latest stable GitHub releases. Future updates should follow the **Latest on this channel** links. [Current measurements and verified artifact hashes](02-updates/current/verification.json) · [Update installed components](02-updates/README.md)
+**Original root setup checked November 21, 2026 at 17:56 Bangkok time.** The Indian OnePlus 15 runs Android 17 `CPH2745_17.0.1.201(EX01)` (C.80) on slot A, with the bootloader unlocked, KernelSU working in LKM mode, and SELinux enforcing. The authorized ADB shell returned UID 0. The original seven components matched their upstream release channels at that check. The two Wi-Fi tools were installed later the same day from their maintainers’ latest stable GitHub releases. [Current measurements and verified artifact hashes](02-updates/current/verification.json) · [Update installed components](02-updates/README.md)
+
+For each install, reinstall or update, open **Latest on this channel** at the time of the run. Keep the **Installed channel** and choose its newest compatible release. **Installed from** identifies the exact release verified on this phone.
 
 | Component | Installed channel | Version on this phone | Verified state | Installed from | Latest on this channel |
 |---|---|---|---|---|---|

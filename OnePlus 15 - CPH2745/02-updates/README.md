@@ -2,7 +2,7 @@
 
 Update each component already on the phone to the latest compatible release on its installed channel. The live inventory determines the scope. Skip absent components. On a stock phone, skip the KernelSU checks. WiFiAnalyzer can be inventoried and updated as a regular Android app. To install for the first time on a clean slate, use the [clean-slate installation guide](../01-root-and-reinstall/README.md).
 
-Use the top-level `device` and `current_state` fields for the present phone. `rooted_rebuild_baseline` and `factory_restore_check` record earlier states. Choose **Latest on this channel** for each component present in the live inventory. For a version check, keep Google Photos closed. To verify PixelMask inside Photos after an update, use the [runtime check](../01-root-and-reinstall/README.md#restore-and-verify-the-pixelmask-scope) with the existing scope. Preserve the current backup preference, Tailscale sign-in and settings. [Current verification](current/verification.json) · [Component channels and official downloads](../README.md#verified-setup-on-the-reference-phone)
+Use the top-level `device` and `current_state` fields for the last recorded checks on the reference phone. `rooted_rebuild_baseline` and `factory_restore_check` record earlier states. At every update check, open **Latest on this channel** for each installed component and compare the live upstream release with the running version. For a version check, keep Google Photos closed. To verify PixelMask inside Photos after an update, use the [runtime check](../01-root-and-reinstall/README.md#restore-and-verify-the-pixelmask-scope) with the existing scope. Preserve the current backup preference, Tailscale sign-in and settings. [Current verification](current/verification.json) · [Component channels and official downloads](../README.md#verified-setup-on-the-reference-phone)
 
 ## 1. Read the phone
 
@@ -42,7 +42,7 @@ rootcmd '/data/adb/ksud debug version'
 rootcmd '/data/adb/ksud module list'
 ```
 
-On the checked v3.3.1 installation, `ksud debug version` reads the **running kernel-side** KernelSU build, expected `32680`. Compare it independently with the Manager APK version and with the selected upstream release. [KernelSU v3.3.1 command implementation](https://github.com/tiann/KernelSU/blob/v3.3.1/userspace/ksud/src/cli.rs#L707-L710)
+On the verified v3.3.1 installation, `ksud debug version` reported the **running kernel-side** KernelSU build as `32680`. Compare it independently with the Manager APK version and with the selected upstream release. [KernelSU v3.3.1 command implementation](https://github.com/tiann/KernelSU/blob/v3.3.1/userspace/ksud/src/cli.rs#L707-L710)
 
 Run the following checks only for components present in that inventory or installed Android packages. Check the manager APK and LKM versions separately. Run the PixelMask scope query only when both Vector and PixelMask are present.
 
@@ -74,16 +74,16 @@ Keep the firmware, active slot, boot ID, enabled modules and applicable configur
 | KernelSU-Tailscaled | Open the [latest stable integration](https://github.com/WayneShao/KernelSU-Tailscaled/releases/latest). Select the ARM64 module ZIP and check which engines it supports. |
 | Tailscale engine | Read `TarballsVersion` and `Tarballs.arm64` from [Tailscale’s stable feed](https://pkgs.tailscale.com/stable/?mode=json). Compare with the running engine version. The integration’s updater fetches this Linux ARM64 tarball and verifies Tailscale’s published SHA-256. |
 | Zygisk Next | Open [Dr-TSNG’s latest stable release](https://github.com/Dr-TSNG/ZygiskNext/releases/latest) and compare the ZIP’s numeric build. |
-| Vector | Open the [canary prerelease list](https://github.com/JingMatrix/Vector/releases?q=prerelease%3Atrue%20canary). Choose the published `canary-N` with the highest numeric `N`, then select its **Release ZIP**. Compare that build with the running Vector CLI status. |
+| Vector | Open the [canary prerelease list](https://github.com/JingMatrix/Vector/releases?q=prerelease%3Atrue%20canary). Choose the compatible published `canary-N` with the highest numeric `N`, then select its **Release ZIP**. Compare that build with the running Vector CLI status. |
 | PixelMask | Open the [latest stable release](https://github.com/kinginu/PixelMask/releases/latest). Compare the APK version code and its required Vector build for Android 17. |
-| WiFiAnalyzer | Compare its version on its original channel. [VREM stable APK](https://github.com/VREMSoftwareDevelopment/WiFiAnalyzer/releases/latest) · [Google Play](https://play.google.com/store/apps/details?id=com.vrem.wifianalyzer) · [F-Droid](https://f-droid.org/en/packages/com.vrem.wifianalyzer/) |
+| WiFiAnalyzer | On the reference phone, check VREM’s stable GitHub APK. For a store installation, use its original store. [VREM stable APK](https://github.com/VREMSoftwareDevelopment/WiFiAnalyzer/releases/latest) · [Google Play](https://play.google.com/store/apps/details?id=com.vrem.wifianalyzer) · [F-Droid](https://f-droid.org/en/packages/com.vrem.wifianalyzer/) |
 | ColorOS Wi-Fi Sense | Compare the installed `coloros_wifi_sense` version code with the [author’s latest stable ZIP](https://github.com/mazemingw/coloros-wifi-sense/releases/latest). |
 
-Check Android, kernel, ABI and dependency requirements. A version check needs only the release metadata and phone inventory. Record each result and check time in the root inventory and current verification, including any feed or live check that was unavailable. Finish a check-only request after reporting the live counts of installed components checked, already current, and eligible for update. Record any incompatible newer release or unresolved check separately. For an update request, proceed only with installed components that have a newer compatible release on their existing channel.
+Check Android, kernel, ABI and dependency requirements. A version check needs only the release metadata and phone inventory. For a phone-only check, report the result and check time in chat, including any feed or live check that was unavailable. When the owner asks to document the check, also update the device inventory and current verification record. Finish a check-only request after reporting the live counts of installed components checked, already current, and eligible for update. Record any incompatible newer release or unresolved check separately. For an update request, proceed only with installed components that have a newer compatible release on their existing channel.
 
 ## 3. Prepare an authorized update
 
-Resolve the selected channel to its exact tag, asset name and version-specific official URL. Create one [temporary Mac working folder](../../README.md#temporary-mac-working-folder) and download the candidate there. For the standalone Tailscale engine, use the integration’s download and verification in step 4. Record the source URL, release tag or package version, size and SHA-256 in the current verification record. Use the exact installed source in the inventory to fetch a matching previous installer into temporary staging only if the rollback plan needs it.
+Resolve the selected channel to its exact tag, asset name and version-specific official URL. Create one [temporary Mac working folder](../../README.md#temporary-mac-working-folder) and download the candidate there. For the standalone Tailscale engine, use the integration’s download and verification in step 4. Keep the source URL, release tag or package version, size and SHA-256 with this run’s results. Use the exact installed source in the inventory to fetch a matching previous installer into temporary staging only if the rollback plan needs it.
 
 ```sh
 umask 077

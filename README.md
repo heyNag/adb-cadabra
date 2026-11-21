@@ -2,6 +2,8 @@
 
 A macOS walkthrough and verification record for the **OnePlus 15, Indian model CPH2745**. The device overview brings together the [installed versions, channels and download sources](OnePlus%2015%20-%20CPH2745/README.md#verified-setup-on-the-reference-phone) and the [folder tree](OnePlus%2015%20-%20CPH2745/README.md#folder-tree). Check your own phone’s build, region, active slot and lock state before using a procedure.
 
+For every install, reinstall or update, open **Latest on this channel** in the device inventory and select the newest compatible release from that component’s chosen channel. For example, KernelSU uses stable and Vector uses canary (the Release ZIP). **Installed from** and **Version on this phone** document what ran on the reference phone. [Component inventory and live download sources](OnePlus%2015%20-%20CPH2745/README.md#verified-setup-on-the-reference-phone)
+
 ## Verified C.80 locked boot
 
 On November 21, 2026, this phone **booted stock C.80 on slot A with the bootloader locked**. We started from rooted C.75 on slot B, restored stock firmware, installed the official Indian C.80 update, and relocked the bootloader. After the wipe, the phone reached **Hello ColorOS 17**. Android then reported a locked bootloader and green Verified Boot. [Verification record](OnePlus%2015%20-%20CPH2745/02-updates/current/verification.json)
