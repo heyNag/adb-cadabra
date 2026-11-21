@@ -187,10 +187,41 @@
       "trusted_signer": "local_OTA.x509.pem",
       "target_partitions": 65,
       "partial_update": true,
-      "requires_source_partition_data": false
+      "requires_source_partition_data": false,
+      "index_md5": "51e2aa56649482ce9c6941430c333dbd",
+      "phone_staging": {
+        "copied_by": "USB from the verified Mac download",
+        "bytes_verified": 9301191889,
+        "sha256_matched_mac": true,
+        "local_install_when_checked": "Disabled in the built-in Software update menu. No package selected."
+      }
     },
-    "phone_updater_offered": "CPH2745_17.0.1.201, 2.17 GB",
-    "restore_progress": "Stock C.75 init_boot_b written. Android boot and absence of KernelSU runtime verified. User data remains. C.80 installation, locked green boot, wipe and welcome-screen verification are pending.",
+    "phone_updater_offered": {
+      "built_in_software_update": {
+        "build": "CPH2745_17.0.1.201",
+        "before_stock_init_boot": "2.17 GB",
+        "after_stock_init_boot": "8.97 GB",
+        "local_install_enabled_when_checked": false
+      },
+      "os_updater_screen_before_owner_update": {
+        "observed": "2026-11-21 16:44–16:45 Asia/Bangkok",
+        "heading": "System update available",
+        "display_build": "CPH2745_17.0.1.201(EX01)",
+        "date_shown": "2026-11-11",
+        "button": "Download update",
+        "download_size_as_displayed": "8.87 GB",
+        "filename": "69a6c985451e47f78054a256ac54218d.zip",
+        "md5_as_displayed": "51e2aa56649482ce9c6941430c333dbd",
+        "changelog": {
+          "Fluid Cloud": "Translucent gradient cards on the lock screen and in notifications.",
+          "Photos": "Choice of image quality and resolution when saving edits. Local copies can be removed after cloud backup.",
+          "Calculator and Translate": "Calculation history, reorganized buttons and converter categories. Richer word details and adaptive sentence translations.",
+          "O+ Connect": "A phone and tablet can connect to the same PC simultaneously. Optional automatic PC unlock.",
+          "Security and privacy": "Hidden apps can return to Home on exit. November 2026 Android security patch."
+        }
+      }
+    },
+    "restore_progress": "Stock C.75 init_boot_b written. Android boot and absence of KernelSU runtime verified. The C.80 full ZIP was copied from the Mac and verified on the phone. The owner will handle the update. C.80 installation, locked green boot, wipe and first welcome screen await verification.",
     "before_unroot": {
       "partition_comparison": {
         "build": "CPH2745_17.0.0.102(EX01)",
