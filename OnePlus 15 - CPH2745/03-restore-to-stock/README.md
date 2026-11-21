@@ -10,33 +10,46 @@ If Android boots and USB debugging is authorized, use current Android Platform T
 
 ```sh
 adb devices -l
+printf 'Enter the serial from the authorized OnePlus row: '
+read -r PHONE_SERIAL
 phone() { adb -s "${PHONE_SERIAL:?Set PHONE_SERIAL first}" "$@"; }
-for prop in ro.product.model ro.product.device ro.build.fingerprint ro.boot.slot_suffix \
+phone get-state
+for prop in ro.product.model ro.product.name ro.product.device ro.boot.prjname \
+            ro.vendor.oplus.regionmark ro.build.display.id ro.build.fingerprint ro.boot.slot_suffix \
             ro.boot.flash.locked ro.boot.vbmeta.device_state ro.boot.verifiedbootstate; do
   printf '%s ' "$prop"
   phone shell getprop "$prop"
 done
 ```
 
-Give OnePlus India the original hardware model and sales region, current fingerprint and slot, and the known modifications. The recorded device is **CPH2745 / CPH2745IN (OP611FL1)**. It was rooted by patching `init_boot_b`. Request the **full manufacturer-signed factory restoration and relock procedure** approved for this hardware and its current anti-rollback level. OnePlus may specify a newer supported build or require service. [OnePlus India software support](https://www.oneplus.in/support/softwareupgrade) · [OnePlus India repair service](https://www.oneplus.in/support/repair)
+Require `device` from `phone get-state`. On this unit, the product is **CPH2745IN**, device **OP611FL1**, project **24863**, vendor region **IN**. Active slot B contains a known KernelSU-patched `init_boot_b`. With the existing Shell root grant, compare `phone shell "su -c 'sha256sum /dev/block/by-name/init_boot_b'"` with the recorded patch digest. Select the actual active partition when checking a different phone or slot. [Recorded C.75 image hashes](../01-root-and-reinstall/kit/IMAGE-SHA256SUMS)
+
+**Check OnePlus’s public guidance first.** The India software page describes ordinary Android updates. Its repair page offers walk-in or pickup service. On November 21, 2026, neither published an owner-executable CPH2745 factory restore and relock sequence. A regular OTA and a factory service package serve different purposes. [OnePlus software update instructions](https://service.oneplus.com/in/search/search-detail?id=2097031&articleIndex=1) · [India repair options](https://service.oneplus.com/in/repair)
+
+**If an applicable public procedure is unavailable**, the owner can request one or arrange service. Give OnePlus the model and sales region, observed product and project, current build fingerprint, slot, lock and Verified Boot states, and known `init_boot_b` modification. Request the approved target for this device’s rollback level, the official package and tool (or service-only route), required partition and slot coverage, the pre-lock checks and lock/wipe sequence, and recovery instructions if boot validation fails. The two slots can legitimately be on different builds. Before any partition write, establish how the complete procedure reaches the locked, erased welcome screen.
 
 ### Get the latest full Indian firmware
 
-1. On the phone, open **Settings → About device**, tap the software-version card or **New version available**, and read the offered build. Compare it with the OnePlus release announcement for **OnePlus 15, IN, CPH2745**. The phone may offer a smaller update from its current build. [OnePlus Community releases](https://community.oneplus.com/) · [OnePlus India software support](https://www.oneplus.in/support/softwareupgrade)
-2. Open the firmware index and select **OnePlus 15 → India → Full**. Its live metadata gives the current `version_number`, `md5sum` and manufacturer `download_url`. Compare the version with the release you intend to install. For recovery of an existing boot partition, use the exact installed build’s archive entry instead. [Firmware index](https://oosdownloader-gui.fly.dev/) · [Latest full India metadata](https://oosdownloader-gui.fly.dev/api/oneplus/oneplus_15/IN/full/info)
-3. Use the index’s download-link resolver to generate a fresh OnePlus/OPlus CDN URL. For programmatic use, send the official `download_url` URL-encoded as the `url` query parameter to `https://oosdownloader-gui.fly.dev/api/ota/resolve-url`. Read `url` from the JSON response. The successful India downloads came from the manufacturer’s HTTPS host `gauss-compota-c-in.allawnofs.com`. Treat the index as a locator. Keep signed URLs out of documents and logs. A JSON response with error 2306, an HTML page or HTTP 403 means you have yet to obtain the ZIP.
-4. Download the **full ZIP** into a private temporary folder on the Mac. Verify its size, transport checksum, ZIP integrity and embedded `META-INF/com/android/metadata`. Match `pre-device` to `OP611FL1` and match the full target fingerprint to the India `CPH2745IN` release. Check the payload’s partition coverage and use OnePlus’s signature verification before installation. A full OTA can supply stock partition images. Relocking also requires the checks below.
+1. On the phone, open **Settings → About device**, tap the software-version card or **New version available**, and read the offered build. Use this screen for identification only. Leave download and installation untouched. For this phone it displayed `CPH2745_17.0.1.201 | 2.17 GB`. If the updater says **Up to date**, compare the installed display build with the live India full-package metadata. For a newer, unoffered build, independently identify the exact CPH2745 India release in OnePlus release notes and check its rollout eligibility before installation. In OnePlus Community, search the model, India and the build number. [OnePlus Community](https://community.oneplus.com/)
+2. On the Mac, select **OnePlus 15 → India → Full** in the firmware index. Compare its `version_number` with the intended target. The index supplies a transport `md5sum` and the manufacturer's `download_url`. For the recovery image of an already-patched partition, select the exact installed build’s archive instead. [India full-package metadata](https://oosdownloader-gui.fly.dev/api/oneplus/oneplus_15/IN/full/info) · [C.75 archive and extraction](../01-root-and-reinstall/README.md#2-select-a-matching-image)
+3. Create one [temporary Mac working folder](../../README.md#temporary-mac-working-folder) in Terminal. Use it through download, extraction, checks, and any approved restore or recovery. Keep stock images in a subdirectory that names their source build, for example `stock-CPH2745_17.0.0.102_EX01/init_boot.img` for C.75.
+
+```sh
+umask 077
+RUN_BASE="$HOME/Downloads/adb-cadabra/OnePlus 15 - CPH2745"
+mkdir -p "$RUN_BASE" &&
+  RESTORE_DIR=$(mktemp -d "$RUN_BASE/factory-$(date +%Y%m%d-%H%M%S)-XXXXXXXX") &&
+  printf '%s\n' "$RESTORE_DIR"
+```
+
+4. Resolve the `download_url` through the index's download-link resolver on the Mac. It takes the URL-encoded `url` parameter at `https://oosdownloader-gui.fly.dev/api/ota/resolve-url` and returns the fresh manufacturer URL in its `url` field. The India package was served over HTTPS by `gauss-compota-c-in.allawnofs.com`. Keep time-limited URLs out of notes and command logs. An HTTP 403, error 2306 or an HTML response means to obtain a fresh link and verify the response again. [Firmware index](https://oosdownloader-gui.fly.dev/)
+5. [Download and verify the full OTA on the Mac](verify-ota.md). Check the manufacturer response, size, transport checksum, ZIP integrity, product, firmware identity, whole-file signer and payload coverage. This stage supplies stock images. A complete factory restore requires the OnePlus procedure in section 2.
 
 **Verified for the current C.80 release.** The full ZIP passed its transport checksum, ZIP integrity checks and Android whole-file signature verification against the connected phone’s trusted OTA signing key. Its payload contains complete images for 65 partitions with no dependency on old partition data, including `boot`, `init_boot` and `vbmeta`. The manifest also sets `partial_update=true`. This release does not claim to cover every partition in a factory service flash. The owner’s requested end state still requires a supported restoration and verified locked boot. [Current verification](../02-updates/current/verification.json) · [Android OTA manifest definition](https://android.googlesource.com/platform/system/update_engine/+/refs/heads/main/update_metadata.proto#435)
 
 ## 2. Restore the complete firmware
 
-If OnePlus supplies an owner-executable procedure, obtain the package and tools directly from OnePlus using its official links. When a download is required, stage it temporarily on the Mac.
-
-```sh
-umask 077
-RESTORE_DIR=$(mktemp -d /private/tmp/oneplus-stock.XXXXXXXX)
-```
+If OnePlus supplies an owner-executable procedure, obtain its prescribed package and tools from the manufacturer onto the Mac in the same run directory. Establish the recovery path while the original phone still boots.
 
 Check the package identity and any manufacturer-provided digest, and use OnePlus’s prescribed signature verification. **Before the first write or wipe**, confirm the exact device, accepted firmware and loss of data with the owner. Follow OnePlus’s partition and slot sequence. It must cover the affected partitions and all bootable slots the vendor requires, including the stock boot chain and verified-boot metadata. Follow its instructions for any pending OTA or slot transition. An ordinary OTA or a stock `init_boot` on one slot alone cannot establish this coverage.
 
@@ -53,4 +66,4 @@ Proceed only when OnePlus confirms that the restored manufacturer-signed firmwar
 | Factory data has been erased | The authorized wipe completed, the device reaches initial setup and the previous user profile is gone. For handoff, leave it at setup. |
 | Current state is documented | Record the verified model, firmware, wipe, bootloader and Verified Boot results. Update the [installed inventory](../README.md#installed-on-your-oneplus-15) and [current verification](../02-updates/current/verification.json). Record any check that only OnePlus service could perform. |
 
-Before replacing the rooted inventory with the verified factory state, carry its component names, channels, sources and desired settings into the clean-install guide as the target for a later rebuild. Leave the phone at the first welcome screen until the owner is ready to root again. After verification, remove the temporary firmware and tools acquired for this restore. These checks establish the phone’s present software and boot state. Prior unlock history, tamper records and third-party attestation results are separate questions.
+Before replacing the rooted inventory with the verified factory state, carry its component names, channels, sources and desired settings into the clean-install guide as the target for a later rebuild. Leave the phone at the first welcome screen until the owner is ready to root again. After verification and any recovery, remove only this factory run directory. These checks establish the phone’s present software and boot state. Prior unlock history, tamper records and third-party attestation results are separate questions.

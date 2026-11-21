@@ -161,7 +161,7 @@
   },
   "check_scope": "PixelMask was verified through its package and Vector configuration. Tailscale sign-in and peer connectivity are deferred.",
   "factory_restore_check": {
-    "checked_at": "2026-11-21T15:46:40+07:00",
+    "checked_at": "2026-11-21T15:57:35+07:00",
     "active_slot": "b",
     "flash_locked": false,
     "verified_boot": "orange",
@@ -181,6 +181,22 @@
       "requires_source_partition_data": false
     },
     "phone_updater_offered": "CPH2745_17.0.1.201, 2.17 GB",
-    "restore_progress": "Preflight only. No firmware flashed, wipe performed or bootloader relocked."
+    "restore_progress": "Read-only preflight complete. OnePlus India publishes OTA instructions and a service route. A factory restore and relock procedure approved for this model, rollback level and boot state remains unverified. The phone is still rooted on slot B. Firmware write, erase, relock and welcome-screen verification are pending.",
+    "active_init_boot_sha256": "e0012d4c9765dcbf2275070dd807ee4c1b691543422b9489effb0ae60aeb0a73",
+    "active_stock_image_checks": {
+      "build": "CPH2745_17.0.0.102(EX01)",
+      "boot_b": {
+        "bytes_checked": 100663296,
+        "sha256": "03fb9cfa5edfadd5044b442d68ca906225f2733f2ce71045248843bb15943fdc",
+        "matches_stock": true
+      },
+      "vbmeta_b": {
+        "physical_partition_bytes": 65536,
+        "ota_image_bytes_checked_from_offset_zero": 12288,
+        "sha256": "5338ad8b14d98c41e0be8f10a8ad4fc48218dc61f3fcba362fc2f2167c171cc9",
+        "matches_stock": true
+      },
+      "slot_a": "Installed build unverified. Its init_boot digest differs from the C.75 reference."
+    }
   }
 }

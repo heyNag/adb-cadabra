@@ -70,9 +70,17 @@ Check Android, kernel, ABI and dependency requirements. A version check needs on
 
 ## 3. Prepare an authorized update
 
-Resolve the selected channel to its exact tag, asset name and version-specific official URL. Download the candidate into a private temporary directory on the Mac (`umask 077`, then `mktemp -d`). For the standalone Tailscale engine, use the integration’s download and verification in step 4. Record the source URL, release tag or package version, size and SHA-256 in the current verification record. Use the exact installed source in the inventory to fetch a matching previous installer into temporary staging only if the rollback plan needs it.
+Resolve the selected channel to its exact tag, asset name and version-specific official URL. Create one [temporary Mac working folder](../../README.md#temporary-mac-working-folder) and download the candidate there. For the standalone Tailscale engine, use the integration’s download and verification in step 4. Record the source URL, release tag or package version, size and SHA-256 in the current verification record. Use the exact installed source in the inventory to fetch a matching previous installer into temporary staging only if the rollback plan needs it.
 
-Compare the downloaded size and local SHA-256 (`shasum -a 256 FILE`) with the published metadata. Verify any upstream signed checksum. For a ZIP, use `unzip -tq FILE`, inspect the installer, check its module ID and version code in `module.prop`, and validate its bundled checksum manifest when present. For an APK, run Android SDK `apksigner verify --print-certs FILE`, check the package and version code, and compare its signing identity with the installed APK, accounting for a verified signing-key rotation.
+```sh
+umask 077
+RUN_BASE="$HOME/Downloads/adb-cadabra/OnePlus 15 - CPH2745"
+mkdir -p "$RUN_BASE" &&
+  UPDATE_DIR=$(mktemp -d "$RUN_BASE/update-$(date +%Y%m%d-%H%M%S)-XXXXXXXX") &&
+  printf '%s\n' "$UPDATE_DIR"
+```
+
+Keep `UPDATE_DIR` for this update’s installers, settings exports and rollback files. Compare the downloaded size and local SHA-256 (`shasum -a 256 FILE`) with the published metadata. Verify any upstream signed checksum. For a ZIP, use `unzip -tq FILE`, inspect the installer, check its module ID and version code in `module.prop`, and validate its bundled checksum manifest when present. For an APK, run Android SDK `apksigner verify --print-certs FILE`, check the package and version code, and compare its signing identity with the installed APK, accounting for a verified signing-key rotation.
 
 ### Temporary Vector settings export
 
@@ -81,7 +89,7 @@ When Vector is present and an update could affect it, its loader or a configured
 ```sh
 export_vector_settings() {
   umask 077
-  VECTOR_MAC_DIR=$(mktemp -d /private/tmp/oneplus-vector.XXXXXXXX) || return 1
+  VECTOR_MAC_DIR=$(mktemp -d "${UPDATE_DIR:?Create the update run directory first}/vector-XXXXXXXX") || return 1
   VECTOR_MAC_DB="$VECTOR_MAC_DIR/settings.db"
   VECTOR_PHONE_DIR=$(phone shell mktemp -d /data/local/tmp/oneplus-vector.XXXXXXXX) || return 1
   VECTOR_PHONE_DB="$VECTOR_PHONE_DIR/settings.db"
@@ -115,7 +123,7 @@ Proceed after the export succeeds, both hashes match and SQLite reports `ok`. Re
 - **Activation.** Reboot only when the selected update needs boot-time activation. For a required reboot, use `phone reboot`. Check `adb devices -l` and `phone shell getprop sys.boot_completed` every five seconds for up to three minutes. Require a new boot ID, boot completion `1`, root and Enforcing SELinux. For a service-only update, check the restarted service directly.
 - **Read back.** Repeat the checks from step 1 for the components that were present. For the installed loader and its dependents, check loader status with `rootcmd '/data/adb/modules/zygisksu/bin/zygiskd status'`, Vector’s running build, and PixelMask’s enablement and scope. For bindhosts, compare the addresses printed by `phone shell ping -c 1 -W 2 doubleclick.net` and the same command for `example.com`. The blocked domain should resolve to the configured sink and the control to a public address. Confirm Tailscale’s running engine, backend and preferences against the baseline. If installation times out, inspect staged and running versions before retrying. If rollback is needed, follow the component’s supported recovery procedure using the exact previous release and compatible configuration. Restore a Vector database only after the matching framework build is running.
 
-After verifying the running state, refresh the affected rows in the [five-column inventory](../README.md#installed-on-your-oneplus-15). Record the exact installed release and asset under **Where we installed it from** and keep the channel discovery link under **Latest on this channel**. Refresh [current verification](current/verification.json) with the observed results. Once verification or rollback is complete, remove the task’s temporary installers and downloads from the Mac and phone.
+After verifying the running state, refresh the affected rows in the [five-column inventory](../README.md#installed-on-your-oneplus-15). Record the exact installed release and asset under **Where we installed it from** and keep the channel discovery link under **Latest on this channel**. Refresh [current verification](current/verification.json) with the observed results. Once verification or rollback is complete, remove this update run directory and the task-owned files staged on the phone after completing the export cleanup below.
 
 If you ran the Vector export, remove only that session’s temporary database and empty directories after verification or rollback. No database belongs in the workspace.
 

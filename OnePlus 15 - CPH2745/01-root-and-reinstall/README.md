@@ -15,11 +15,14 @@ If Manager reports **Not installed**, confirm its compatibility with the actual 
 
 ## 0. Set up a fresh Mac and phone
 
-Open Terminal in this project’s root folder. Keep the same Terminal session for the steps below. The private temporary folder holds downloaded tools, installers and working images.
+Open Terminal in this project’s root folder. Keep the same Terminal session for the steps below. Create one [temporary Mac working folder](../../README.md#temporary-mac-working-folder) for all downloads, extracted files, patches and checks in this run.
 
 ```sh
 umask 077
-DOWNLOAD_DIR=$(mktemp -d "${TMPDIR:-/tmp}/oneplus-install.XXXXXXXX")
+RUN_BASE="$HOME/Downloads/adb-cadabra/OnePlus 15 - CPH2745"
+mkdir -p "$RUN_BASE" &&
+  DOWNLOAD_DIR=$(mktemp -d "$RUN_BASE/install-$(date +%Y%m%d-%H%M%S)-XXXXXXXX") &&
+  printf '%s\n' "$DOWNLOAD_DIR"
 ```
 
 **Install Android Platform Tools.** If `adb version` and `fastboot --version` already work, use your existing tools. Otherwise download Google’s Mac ZIP, unpack it and add the extracted directory to this shell’s `PATH`:
@@ -34,7 +37,7 @@ adb version
 fastboot --version
 ```
 
-Use the Mac’s built-in `stat`, `od` and `shasum` for image verification. Get the OTA extractor in section 2 when preparing a stock image. [Google’s Platform Tools for Mac](https://developer.android.com/tools/releases/platform-tools)
+Have Python 3 available for checking the package’s embedded identity in section 2. The image checks also use the Mac’s built-in `stat`, `od` and `shasum`. [Python for macOS](https://www.python.org/downloads/macos/) Get the OTA extractor in section 2 when preparing a stock image. [Google’s Platform Tools for Mac](https://developer.android.com/tools/releases/platform-tools)
 
 **Prepare the phone.** Finish basic Android setup. Under **Settings → About device → Version**, tap **Build number** or **Version number** seven times. Enter the phone’s PIN if prompted, then search Settings for **Developer options** and enable **USB debugging**. Enable **OEM unlocking** there only when rooting a locked phone with an approved wipe. Connect the screen-unlocked phone with a USB data cable. Run `adb devices -l` and accept **Allow USB debugging?** on the phone for this Mac. Rerun the command until the intended phone shows `device`. A bootloader-unlock wipe clears this authorization. [Android developer options and USB debugging](https://developer.android.com/studio/debug/dev-options)
 
@@ -99,17 +102,36 @@ command -v payload-dumper-go
 payload-dumper-go -h
 ```
 
-For a newer build, require the OTA’s embedded product/device and full target fingerprint to match the actual phone from section 1. The table above describes only the recorded build. Allow space for the full ZIP and extracted payload (about 9.24 GB each for that build), plus the selected images. Extract the requested partition into temporary storage.
+For a newer build, require the OTA’s embedded product/device and full target fingerprint to match the actual phone from section 1. The table above describes only the recorded build. Allow space for the full ZIP and extracted payload (about 9.24 GB each for that build), plus the selected images. Choose a build-labelled subdirectory for the images. The following block derives its name from the package’s verified display build and checks it against the selected phone. Keep that directory through recovery and verification.
+
+```sh
+STOCK_DIR=$(python3 - "$OTA" "$DOWNLOAD_DIR" "$(phone shell getprop ro.build.display.id)" <<'PY'
+import re, sys, zipfile
+from pathlib import Path
+ota, run, phone_build = sys.argv[1:]
+with zipfile.ZipFile(ota) as archive:
+    metadata = archive.read("META-INF/com/android/metadata").decode().splitlines()
+fields = dict(line.split("=", 1) for line in metadata if "=" in line)
+build = fields.get("version_name", "")
+match = re.fullmatch(r"(CPH2745_[0-9]+(?:\.[0-9]+)+)\(([A-Za-z0-9]+)\)", build)
+if not match or build != phone_build:
+    sys.exit("The OTA version_name must match the selected phone's installed build.")
+print(Path(run) / f"stock-{match[1]}_{match[2]}")
+PY
+) && printf '%s\n' "$STOCK_DIR"
+```
+
+After the printed directory matches the installed build, extract the stock image.
 
 ```sh
 unzip -p "$OTA" payload.bin > "$DOWNLOAD_DIR/payload.bin" &&
-  payload-dumper-go -p init_boot -o "$DOWNLOAD_DIR/stock" "$DOWNLOAD_DIR/payload.bin"
+  payload-dumper-go -p init_boot -o "$STOCK_DIR" "$DOWNLOAD_DIR/payload.bin"
 ```
 
 Keep the extractor’s source and output hash verification enabled. For the recorded **C.75 build only**, check that the complete stock image is 8,388,608 bytes and that its full SHA-256 matches the OnePlus reference. Require an `OK` result.
 
 ```sh
-stock_image="$DOWNLOAD_DIR/stock/init_boot.img"
+stock_image="$STOCK_DIR/init_boot.img"
 [ "$(stat -f '%z' "$stock_image")" = 8388608 ] &&
   printf '%s  %s\n' 8910c3ce57893273120434866ef29a436771ae931290e83156807153c8936002 "$stock_image" |
   shasum -a 256 -c -
@@ -123,11 +145,11 @@ od -An -tx1 -j 8 -N 4 "$stock_image"
 od -An -tx1 -j 40 -N 4 "$stock_image"
 ```
 
-For another firmware, use its own payload manifest’s expected partition size and hash. Check `stat -f '%z' "$DOWNLOAD_DIR/stock/init_boot.img"` and `shasum -a 256 "$DOWNLOAD_DIR/stock/init_boot.img"` against those values. A source-dependent operation requires the matching base image or a suitable full package. To obtain all three stock images, select `-p init_boot,boot,vbmeta`. [C.75 image checksums](kit/IMAGE-SHA256SUMS) · [Extractor flags](https://github.com/ssut/payload-dumper-go/blob/2.1.0/cmd/root.go)
+For another firmware, use its own payload manifest’s expected partition size and hash. Check `stat -f '%z' "$STOCK_DIR/init_boot.img"` and `shasum -a 256 "$STOCK_DIR/init_boot.img"` against those values. A source-dependent operation requires the matching base image or a suitable full package. To obtain all three stock images, select `-p init_boot,boot,vbmeta`. [C.75 image checksums](kit/IMAGE-SHA256SUMS) · [Extractor flags](https://github.com/ssut/payload-dumper-go/blob/2.1.0/cmd/root.go)
 
 **Prepare the image to flash.** Generate a fresh patch from the verified stock image with the selected official KernelSU manager:
 
-1. Run `phone push "$DOWNLOAD_DIR/stock/init_boot.img" /sdcard/Download/init_boot.img`. Confirm `phone shell sha256sum /sdcard/Download/init_boot.img` matches the verified stock digest.
+1. Run `phone push "$STOCK_DIR/init_boot.img" /sdcard/Download/init_boot.img`. Confirm `phone shell sha256sum /sdcard/Download/init_boot.img` matches the verified stock digest.
 2. In KernelSU choose **Select a file and patch**, select the verified stock file, and confirm the detected kernel family. Read the completed patch log and set `PATCH_ON_PHONE` to its exact output path. This step creates a file.
 3. Set `PATCH_TO_FLASH="$DOWNLOAD_DIR/${PATCH_ON_PHONE##*/}"`, then run `phone pull "$PATCH_ON_PHONE" "$PATCH_TO_FLASH"`. Compare `phone shell sha256sum "$PATCH_ON_PHONE"` with `shasum -a 256 "$PATCH_TO_FLASH"`. Require identical hashes, a file length matching the intended partition, and a successful patch log. A newly generated patch has its own digest. Use its actual filename and hash even when the same KernelSU release was used before. Keep the verified stock image accessible on the Mac through the first boot.
 
@@ -167,7 +189,7 @@ Require successful **Sending** and **Writing** before running `fb reboot`. If th
 
 ### Recover a failed first boot
 
-If the patch was the only partition write, the verified stock image from section 2 can undo that write. Return to the bootloader and repeat the serial, product, mode, slot, unlock-state and partition-size checks above. Confirm the active slot is still the one just flashed and the stock file still matches the digest verified before flashing. Then run `fb flash "${ROOT_PARTITION:?Recheck the original target}" "${DOWNLOAD_DIR:?}/stock/init_boot.img"`. Require successful sending and writing before `fb reboot`, then confirm Android boots on the original fingerprint. If the slot changed, the write target is uncertain or the bootloader is unreachable, stop further writes and contact OnePlus. [OnePlus India service](https://www.oneplus.in/support/repair)
+If the patch was the only partition write, the verified stock image from section 2 can undo that write. Return to the bootloader and repeat the serial, product, mode, slot, unlock-state and partition-size checks above. Confirm the active slot is still the one just flashed and the stock file still matches the digest verified before flashing. Then run `fb flash "${ROOT_PARTITION:?Recheck the original target}" "${STOCK_DIR:?Verify the stock build}/init_boot.img"`. Require successful sending and writing before `fb reboot`, then confirm Android boots on the original fingerprint. If the slot changed, the write target is uncertain or the bootloader is unreachable, stop further writes and contact OnePlus. [OnePlus India service](https://www.oneplus.in/support/repair)
 
 ## 4. Install and verify the selected modules
 
@@ -177,4 +199,4 @@ For each module, download the release selected in section 1 into `DOWNLOAD_DIR`.
 2. Install **Zygisk Next**, then **Vector** using the selected canary Release ZIP. After reboot, check `phone shell "su -c '/data/adb/modules/zygisksu/bin/zygiskd status'"` for active injection and Vector loaded, then `phone shell "su -c '/data/adb/modules/zygisk_vector/cli --json status'"` for the expected build.
 3. Select and verify the chosen stable **PixelMask** APK, then run `phone install "$asset"`. Enable it in Vector for **Google Photos** and **PixelMask itself**, Android user 0 only. In PixelMask select the **original Pixel** profile. Verify enablement and scope in Vector. Keep Google Photos closed and automatic backup off. The owner manually chooses individual uploads.
 
-After verification, refresh the [shared inventory](../README.md#installed-on-your-oneplus-15) and [current verification](../02-updates/current/verification.json) with the running versions, selected release links and digests. Record the verified firmware, patched filename and actual SHA-256. The temporary installers can be discarded after the checks.
+After verification, refresh the [shared inventory](../README.md#installed-on-your-oneplus-15) and [current verification](../02-updates/current/verification.json) with the running versions, selected release links and digests. Record the verified firmware, patched filename and actual SHA-256. After the checks and any recovery, remove only this install run directory.

@@ -30,11 +30,11 @@ After a check, replace the timestamp and [verification record](02-updates/curren
 
 ## Recovery sources and regeneration
 
-**To get the latest full firmware**, open **Settings → About device → Software update**, read the build offered for this phone, then select **OnePlus 15 → India → Full** in the firmware index. The index discovers the package. The ZIP itself must come from OnePlus/OPlus. Resolve a fresh link each time. [Latest India full-package metadata](https://oosdownloader-gui.fly.dev/api/oneplus/oneplus_15/IN/full/info) · [Download and verification instructions](03-restore-to-stock/README.md#get-the-latest-full-indian-firmware)
+**To get the latest full firmware**, open **Settings → About device → Software update**, read the build offered for this phone, then select **OnePlus 15 → India → Full** in the firmware index. Use the phone only to read the offered build. Download the ZIP on the Mac from the OnePlus/OPlus distribution link located by the index. Resolve a fresh link each time. [Latest India full-package metadata](https://oosdownloader-gui.fly.dev/api/oneplus/oneplus_15/IN/full/info) · [Download and verification instructions](03-restore-to-stock/README.md#get-the-latest-full-indian-firmware)
 
 **Last firmware check, November 21, 2026.** The phone runs `CPH2745_17.0.0.102(EX01)` (C.75). Its updater offered `CPH2745_17.0.1.201` (C.80) as a 2.17 GB update. The full India ZIP is 9,301,191,889 bytes. Its signature matched a trusted OTA key on the phone. It carries complete images for 65 target partitions and declares a partial partition set. A full factory service image and relock procedure remain unverified. Both releases were available from the manufacturer's CDN with freshly resolved links. A stock image used to undo the existing root patch must match the firmware currently running. [Recorded C.75 identity](01-root-and-reinstall/kit/firmware-identification.json) · [Exact-build extraction](01-root-and-reinstall/README.md#2-select-a-matching-image)
 
-**To recreate the rooted setup**, use each project’s **Latest on this channel** link for its APK, module ZIP or engine. The installed-source column identifies the build to select if you need to reproduce a particular version. Stage firmware and installers outside this project.
+**To recreate the rooted setup**, use each project’s **Latest on this channel** link for its APK, module ZIP or engine. The installed-source column identifies the build to select if you need to reproduce a particular version. Use one [temporary Mac working folder](../README.md#temporary-mac-working-folder) for the entire operation.
 
 | Item | Source and how to obtain it |
 |---|---|
@@ -59,5 +59,6 @@ OnePlus 15 - CPH2745/
 │   └── current/
 │       └── verification.json       ← latest phone and upstream checks
 └── 03-restore-to-stock/
-    └── README.md                   ← restore official firmware, wipe and verify locked stock
+    ├── README.md                   ← restore official firmware, wipe and verify locked stock
+    └── verify-ota.md               ← download on the Mac and verify OTA identity, signature and coverage
 ```
