@@ -1,6 +1,6 @@
 # Clean install or redo a rooted OnePlus 15
 
-On a fresh phone running official, unrooted firmware, start at [Set up a fresh Mac and phone](#0-set-up-a-fresh-mac-and-phone). For a phone that still has active KernelSU, the redo procedure below starts with a wipe. For the later factory-to-root rebuild, use the original component versions, channels and tagged sources in the [recorded rooted setup](../README.md#recorded-rooted-components) and restore the module settings in section 4.
+On a fresh phone running official, unrooted firmware, start at [Set up a fresh Mac and phone](#0-set-up-a-fresh-mac-and-phone). For a phone that still has active KernelSU, the redo procedure below starts with a wipe. For the later factory-to-root rebuild, use the original component versions, channels and tagged sources in the [recorded rooted setup](#recorded-rooted-components) and restore the module settings in section 4.
 
 ## Redo on an already-rooted phone
 
@@ -65,7 +65,7 @@ phone shell uname -r
 
 Require `phone get-state` to report `device` and boot completion to report `1`. Compare the model, product, device, ABI, display build and full fingerprint with the firmware you plan to use. Record the actual slot and lock state before continuing.
 
-**Choose which releases to install.** By default, use **Latest on this channel** for the newest compatible stable releases and Vector’s canary **Release** ZIP. When reproducing the recorded versions, use **Where we installed it from** for the exact tags, build numbers and assets. For the first root check after erasing an already-rooted phone, install the exact Manager APK matching its previously running KernelSU build. In either mode, check Android, kernel, ABI and dependency compatibility with the current phone. [Component inventory](../README.md#installed-on-your-oneplus-15) · [KernelSU releases](https://github.com/tiann/KernelSU/releases)
+**Choose which releases to install.** By default, use **Latest on this channel** for the newest compatible stable releases and Vector’s canary **Release** ZIP. When reproducing the recorded versions, use **Where we installed it from** for the exact tags, build numbers and assets. For the first root check after erasing an already-rooted phone, install the exact Manager APK matching its previously running KernelSU build. In either mode, check Android, kernel, ABI and dependency compatibility with the current phone. [Recorded rooted components](#recorded-rooted-components) · [KernelSU releases](https://github.com/tiann/KernelSU/releases)
 
 For each installer or extractor release archive, set `ASSET_URL`, `ASSET_NAME` and `EXPECTED_SHA256` from the selected official release. Use the exact asset filename and the 64-character hex digest supplied by the release or its GitHub asset metadata. Run the download and checksum together and require an `OK` result before installation.
 
@@ -76,6 +76,24 @@ curl --fail --location --proto '=https' --proto-redir '=https' --output "$asset"
 ```
 
 Select the official release APK for KernelSU Manager (package `me.weishu.kernelsu`). After checksum verification set `KSU_APK="$asset"` and run `phone install "$KSU_APK"`. Open KernelSU and confirm the phone supports the LKM installation route. The boot component will be installed after the manager patches the matching image.
+
+### Recorded rooted components
+
+The table records the last working rooted setup on November 21, 2026 at 13:56 Bangkok time. All seven then matched their selected release channels. Use these versions and tagged sources to reproduce that setup after the factory handoff.
+
+**Vector is the only component on canary** because PixelMask 1.2.0 requires its Android 17 compatibility fix. The other six components use stable releases. [Compatibility notes](https://github.com/kinginu/PixelMask/releases/tag/18-1.2.0)
+
+For a fresh download, use **Latest on this channel**. **Where we installed it from** identifies the exact build verified on the phone.
+
+| Component or module | Rebuild channel | Version in rooted setup | Where we installed it from | Latest on this channel |
+|---|---|---|---|---|
+| KernelSU root and manager | Official stable, LKM mode | **3.3.1**, build **32680** | [tiann/KernelSU v3.3.1](https://github.com/tiann/KernelSU/releases/tag/v3.3.1). The official manager patched the phone’s matching stock `init_boot` image. | [Stable manager APK](https://github.com/tiann/KernelSU/releases/latest) · choose the release APK |
+| bindhosts | Stable | **2.1.5**, code **215** | `bindhosts.zip` from [bindhosts/bindhosts v2.1.5](https://github.com/bindhosts/bindhosts/releases/tag/v2.1.5) | [Download stable ZIP](https://github.com/bindhosts/bindhosts/releases/latest/download/bindhosts.zip) |
+| KernelSU-Tailscaled module | Stable | **2.0.5**, code **20000017** | ARM64 module ZIP from [WayneShao/KernelSU-Tailscaled v2.0.5](https://github.com/WayneShao/KernelSU-Tailscaled/releases/tag/v2.0.5) | [Stable integration](https://github.com/WayneShao/KernelSU-Tailscaled/releases/latest) · choose the ARM64 ZIP |
+| Tailscale engine | Official Tailscale stable | **1.104.7** | The module’s engine updater installed [Tailscale’s official ARM64 package](https://pkgs.tailscale.com/stable/tailscale_1.104.7_arm64.tgz) | [Stable Linux binaries](https://pkgs.tailscale.com/stable/#static) · choose ARM64, or use the module’s engine updater |
+| Zygisk Next | Stable | **1.5.3**, build **880** | Installed from [LSPosed/ZygiskNext v1.5.3](https://github.com/LSPosed/ZygiskNext/releases/tag/v1.5.3). | [Stable loader](https://github.com/Dr-TSNG/ZygiskNext/releases/latest) · choose the release ZIP |
+| Vector | **Canary**, Release ZIP | **2.2**, build **3119**, API **102** | `Vector-v2.2-3119-Release.zip` from [JingMatrix/Vector canary-3119](https://github.com/JingMatrix/Vector/releases/tag/canary-3119) | [Canary releases](https://github.com/JingMatrix/Vector/releases?q=prerelease%3Atrue%20canary) · choose the highest canary build’s `*-Release.zip` |
+| PixelMask | Stable | **1.2.0**, code **18** | `PixelMask-1.2.0.apk` from [kinginu/PixelMask 18-1.2.0](https://github.com/kinginu/PixelMask/releases/tag/18-1.2.0) | [Stable add-on](https://github.com/kinginu/PixelMask/releases/latest) · choose the PixelMask APK |
 
 ## 2. Select a matching image
 

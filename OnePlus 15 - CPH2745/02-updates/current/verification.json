@@ -5,20 +5,37 @@
     "ro.build.display.id": "CPH2745_17.0.1.201(EX01)",
     "ro.build.fingerprint": "OnePlus/CPH2745IN/OP611FL1:17/CP2A.260605.016/B.R4T3.50a3663-29f0eba-29fce1c:user/release-keys",
     "ro.boot.slot_suffix": "_a",
-    "ro.boot.flash.locked": "0",
+    "ro.boot.flash.locked": "1",
     "sys.boot_completed": "1",
-    "ro.boot.vbmeta.device_state": "unlocked",
-    "ro.boot.verifiedbootstate": "orange",
+    "ro.boot.vbmeta.device_state": "locked",
+    "ro.boot.verifiedbootstate": "green",
     "ro.boot.veritymode": "enforcing",
     "ro.build.version.security_patch": "2026-11-01",
-    "ro.boot.vbmeta.digest": "b3a36735edddc817c5e7c14a05f2bda6935ab3c7d92b56632251ccb78f65b2c3"
+    "ro.boot.vbmeta.digest": "b3a36735edddc817c5e7c14a05f2bda6935ab3c7d92b56632251ccb78f65b2c3",
+    "ro.product.name": "CPH2745IN",
+    "ro.boot.vbmeta.hash_alg": "sha256",
+    "init.svc.bootanim": "stopped",
+    "init.svc.zygote": "running"
   },
-  "kernel": "6.12.69-android16-6-g5fd39602326e-ab16372235-4k",
-  "selinux": "Enforcing",
-  "root": "su -c id returned 127. No kernelsu entry in /proc/modules.",
-  "kernelsu_lkm_loaded": false,
-  "boot_id": "7ae310df-901b-42a9-866d-ae1c355132fa",
-  "checked_at": "2026-11-21T17:15:17+07:00",
+  "current_state": {
+    "checked_at": "2026-11-21T17:24:23+07:00",
+    "reset_and_initial_setup": "Owner confirmed the lock/erase prompt, restart and first Hello ColorOS 17 screen.",
+    "current_screen": "Owner subsequently completed setup without Google sign-in and reached Android Home.",
+    "device_provisioned": 1,
+    "post_wipe_avb_digest_matches_signed_c80": true,
+    "selinux": "Enforcing",
+    "kernel": "6.12.69-android16-6-g5fd39602326e-ab16372235-4k",
+    "new_boot_id": "0eaf4c47-0cc8-421e-9473-419a818f1db3",
+    "shell_uid": 2000,
+    "su_in_shell_path": false,
+    "kernelsu_module_in_proc_modules": false,
+    "packages_checked_for_user_0": {
+      "package_service": "found",
+      "me.weishu.kernelsu": "No installed path, exit 1.",
+      "com.kinginu.pixelmask": "No installed path, exit 1."
+    },
+    "usb_debugging": "Owner temporarily enabled USB debugging and authorized the Mac for this post-wipe read."
+  },
   "rooted_rebuild_baseline": {
     "root": "uid=0(root) gid=0(root) groups=0(root) context=u:r:ksu:s0",
     "kernelsu_lkm_loaded": true,
@@ -172,10 +189,7 @@
     "check_scope": "PixelMask was verified through its package and Vector configuration. Tailscale sign-in and peer connectivity are deferred."
   },
   "factory_restore_check": {
-    "checked_at": "2026-11-21T17:15:17+07:00",
-    "active_slot": "a",
-    "flash_locked": false,
-    "verified_boot": "orange",
+    "checked_at": "2026-11-21T17:24:23+07:00",
     "latest_india_full_ota": {
       "display_build": "CPH2745_17.0.1.201(EX01)",
       "ota_id": "CPH2745_11.C.80_1800_202610290517",
@@ -287,7 +301,7 @@
         "observed_result": "Install guide displayed before package selection."
       }
     },
-    "restore_progress": "The Indian C.80 local update installed and booted on slot A. Its AVB digest matches the signed C.80 archive. Virtual A/B merge completed. The bootloader is unlocked and user data remains. The final relock, wipe, green Verified Boot and first welcome screen are pending.",
+    "restore_progress": "Verified on this Indian CPH2745. The owner accepted the lock/erase prompt and observed the first Hello ColorOS 17 screen. Android subsequently confirmed locked and green on official C.80, slot A. The owner continued setup to Home.",
     "before_unroot": {
       "partition_comparison": {
         "build": "CPH2745_17.0.0.102(EX01)",
@@ -382,8 +396,57 @@
       "boot_animation": "stopped",
       "user_0_credential_encrypted_storage_available": true,
       "keyguard_showing": false,
-      "slot_a_marked_successful": "No independent postboot Boot Control HAL reading from unprivileged ADB.",
-      "wifi_on": 0
+      "slot_a_marked_successful": "Confirmed yes in bootloader fastboot before relock.",
+      "wifi_on": 0,
+      "android_before_relock": {
+        "device": {
+          "ro.product.model": "CPH2745",
+          "ro.build.version.release": "17",
+          "ro.build.display.id": "CPH2745_17.0.1.201(EX01)",
+          "ro.build.fingerprint": "OnePlus/CPH2745IN/OP611FL1:17/CP2A.260605.016/B.R4T3.50a3663-29f0eba-29fce1c:user/release-keys",
+          "ro.boot.slot_suffix": "_a",
+          "ro.boot.flash.locked": "0",
+          "sys.boot_completed": "1",
+          "ro.boot.vbmeta.device_state": "unlocked",
+          "ro.boot.verifiedbootstate": "orange",
+          "ro.boot.veritymode": "enforcing",
+          "ro.build.version.security_patch": "2026-11-01",
+          "ro.boot.vbmeta.digest": "b3a36735edddc817c5e7c14a05f2bda6935ab3c7d92b56632251ccb78f65b2c3"
+        },
+        "kernel": "6.12.69-android16-6-g5fd39602326e-ab16372235-4k",
+        "selinux": "Enforcing",
+        "root": "su -c id returned 127. No kernelsu entry in /proc/modules.",
+        "kernelsu_lkm_loaded": false,
+        "boot_id": "7ae310df-901b-42a9-866d-ae1c355132fa",
+        "checked_at": "2026-11-21T17:15:17+07:00"
+      }
+    },
+    "prelock_fastboot": {
+      "product": "canoe",
+      "is-userspace": "no",
+      "current-slot": "a",
+      "slot-count": 2,
+      "unlocked": "yes",
+      "secure": "yes",
+      "slot-successful:a": "yes",
+      "slot-unbootable:a": "no",
+      "slot-retry-count:a": 6,
+      "slot-successful:b": "yes",
+      "slot-unbootable:b": "yes",
+      "slot-retry-count:b": 7,
+      "snapshot-update-status": "none",
+      "get_unlock_ability": 1,
+      "custom_key_queries": "avb-custom-key, has-slot:avb_custom_key and partition-size:avb_custom_key all returned GetVar Variable Not found."
+    },
+    "relock": {
+      "command": "fastboot -s \"$PHONE_SERIAL\" flashing lock",
+      "count": 1,
+      "raw_response": "OKAY [  0.008s]",
+      "owner_observation": "Owner confirmed selecting the physical lock confirmation and seeing the restart.",
+      "left_bootloader_by": "2026-11-21T17:20:43+07:00",
+      "post_reset_setup_screen": "Owner observed Hello ColorOS 17 after the restart.",
+      "post_reset_setup_progress": "Owner continued from Hello through setup and reached Android Home.",
+      "post_reset_android_verification": "Verified over newly authorized ADB at 17:24:23. The live device and current_state fields record the locked, green Android boot and exact C.80 fingerprint and AVB digest."
     }
   }
 }
