@@ -170,7 +170,7 @@
     "check_scope": "PixelMask was verified through its package and Vector configuration. Tailscale sign-in and peer connectivity are deferred."
   },
   "factory_restore_check": {
-    "checked_at": "2026-11-21T16:36:35+07:00",
+    "checked_at": "2026-11-21T16:46+07:00",
     "active_slot": "b",
     "flash_locked": false,
     "verified_boot": "orange",
@@ -194,6 +194,15 @@
         "bytes_verified": 9301191889,
         "sha256_matched_mac": true,
         "local_install_when_checked": "Disabled in the built-in Software update menu. No package selected."
+      },
+      "manufacturer_source_check": {
+        "index": "OnePlus 15 / IN / full / info",
+        "transport": "HTTPS",
+        "range_status": 206,
+        "zip_header_verified": true,
+        "range_total_matches_package_bytes": true,
+        "basename_matches_os_updater": true,
+        "local_zip_md5_matches_index_and_os_updater": true
       }
     },
     "phone_updater_offered": {
@@ -218,6 +227,26 @@
           "Calculator and Translate": "Calculation history, reorganized buttons and converter categories. Richer word details and adaptive sentence translations.",
           "O+ Connect": "A phone and tablet can connect to the same PC simultaneously. Optional automatic PC unlock.",
           "Security and privacy": "Hidden apps can return to Home on exit. November 2026 Android security patch."
+        }
+      },
+      "os_updater_device_tab_before_owner_update": {
+        "observed": "2026-11-21T16:46+07:00",
+        "device_as_shown": "OnePlus 15 (IN)",
+        "support_as_shown": "Your device is supported",
+        "model": "CPH2745",
+        "android": "17",
+        "installed_os": "CPH2745_17.0.0.102(EX01)",
+        "installed_ota_id": "CPH2745_11.C.75_1750_202610181120",
+        "incremental": "B.R4T3.55357f5-2eb9868-2eda512",
+        "security_patch": "2026-10-01",
+        "kernel": "6.12.69-android16-6-g242e1a07f878-ab15865446-4k",
+        "hardware_as_shown": {
+          "ram": "16 GB",
+          "chipset": "QTI SM8850 (canoe)",
+          "cpu": "6 × 3.629 GHz + 2 × 4.608 GHz",
+          "screen": "6.78 inches (17.23 cm)",
+          "rear_cameras": "3 × 50 MP",
+          "front_camera": "32 MP"
         }
       }
     },
