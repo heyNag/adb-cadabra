@@ -59,6 +59,8 @@ Complete the vendor-prescribed stock boot or pre-lock validation. A normal boot 
 
 ## 3. Relock, erase and verify
 
+iFixDroid explains the stock-firmware prerequisite at 0:38 and leaves the lock command unexecuted on his rooted phone at 4:16. [Watch the relock explanation](https://www.youtube.com/watch?v=awbeXSDwivo)
+
 Proceed only when OnePlus confirms that the restored manufacturer-signed firmware is suitable for a locked boot on this unit. **Confirm relocking and its data wipe with the owner** before accepting the device prompt. Use OnePlus’s approved relock and reset sequence. The required factory-data wipe clears KernelSU Manager, module data under `/data/adb`, PixelMask and remaining local settings. If OnePlus’s relock already performs that wipe, verify the result before considering a separate reset.
 
 | Completion check | Evidence |

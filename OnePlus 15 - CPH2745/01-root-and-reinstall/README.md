@@ -157,7 +157,7 @@ For another firmware, use its own payload manifest’s expected partition size a
 
 Doug Lynch’s independent WebUSB tool provides a Chromium browser interface for unlocking a supported device after OEM unlocking is enabled. Completing an unlock erases user data. [Explaining Android bootloader unlock tool](https://explainingandroid.com/bootloader-unlock/)
 
-For a OnePlus 15 sold in mainland China, OnePlus’s official ColorOS Upgrade Assistant describes how to apply for Deep Testing on supported ColorOS 16 and later releases. Check the updated notice for current device and account eligibility. For the Indian CPH2745, follow the serial and bootloader checks below when rooting, or use the factory-restore guide when returning to locked stock. [Original OnePlus announcement](https://bbs.oneplus.com/thread/1926504022886318086) · [Updated OnePlus eligibility rules](https://bbs.oneplus.com/thread/2175833961601695750) · [Factory restore and relock](../03-restore-to-stock/README.md)
+For a OnePlus 15 sold in mainland China, OnePlus’s official ColorOS Upgrade Assistant describes how to apply for Deep Testing on supported ColorOS 16 and later releases. Check the updated notice for current device and account eligibility. For the Indian CPH2745, follow the serial and bootloader checks below when rooting, or use the factory-restore guide when returning to locked stock. [Original OnePlus announcement](https://bbs.oneplus.com/thread/1926504022886318086) · [Updated OnePlus eligibility rules](https://bbs.oneplus.com/thread/2175833961601695750) · [Factory restore and relock](../03-restore-to-stock/README.md) · [Third-party promotional clip claiming a remote unlock on Chinese PLK110](https://www.youtube.com/watch?v=s1F3sucMW4I)
 
 For a verified OnePlus 15 with an `init_boot` ramdisk, resolve the target partition from the booted Android slot, then enter the real bootloader. In the Android shell values below, `_a` and `_b` map to `init_boot_a` and `init_boot_b`. If the slot is missing, the layout differs or the device is unsupported by the selected manager, establish its supported procedure before any write.
 
@@ -168,6 +168,8 @@ case "$ANDROID_SLOT" in
   *) unset ROOT_PARTITION ;;
 esac
 ```
+
+For physical Fastboot entry, Doug Lynch shows holding Volume Down during restart at 0:35. At 0:57 he uses the volume keys to move and Power to select. **Start** returns to Android (1:18). [OnePlus 15 Fastboot video](https://www.youtube.com/watch?v=lb9WqZ4IvtM)
 
 When `ROOT_PARTITION` identifies the verified target, run `phone reboot bootloader`. Read the actual output of every query:
 
