@@ -1,0 +1,22 @@
+{
+  "product_name": "CPH2745IN",
+  "pre-device": "OP611FL1",
+  "version_name": "CPH2745_17.0.0.102(EX01)",
+  "ota-id": "CPH2745_11.C.75_1750_202610181120",
+  "post-build": "OnePlus/CPH2745IN/OP611FL1:17/CP2A.260605.016/B.R4T3.55357f5-2eb9868-2eda512:user/release-keys",
+  "post-build-incremental": "B.R4T3.55357f5-2eb9868-2eda512",
+  "post-security-patch-level": "2026-10-01",
+  "post-sdk-level": "37",
+  "oplus_project_numbers": "24863",
+  "prepared_at_utc": "2026-11-08T08:51:39.247552+00:00",
+  "source_origin": "https://gauss-compota-c-in.allawnofs.com",
+  "source_archive_path": "/remove-1b11a964dc131f65c034b63e6434d206/g-d256e581826faa02bf50a06180697a3d/component-ota/26/10/18/847936259a7446bbb7d62be1a8c8bff8.zip",
+  "source_archive_bytes": 9240351005,
+  "discovery_index": "https://oosdownloader-gui.fly.dev/api/oneplus/oneplus_15/IN/full/info",
+  "provenance_limitations": [
+    "Images fetched over HTTPS from the resolved OnePlus/OPlus OTA CDN; third-party index used only to discover the official package.",
+    "Metadata SHA256 checked against OTA payload_properties; each data operation and final image checked against payload manifest SHA256.",
+    "Full 9.24GB archive was not downloaded: whole-archive MD5/SHA256 and payload/vendor cryptographic signatures were not verified.",
+    "These stock images restore only their respective partitions; this is not a complete unbrick package."
+  ]
+}

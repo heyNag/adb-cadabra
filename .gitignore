@@ -1,0 +1,8 @@
+# Track the device guides and their text verification records.
+*
+!*/
+!.gitignore
+!*.md
+!*.json
+!SHA256SUMS
+!IMAGE-SHA256SUMS
