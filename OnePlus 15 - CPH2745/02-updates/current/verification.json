@@ -170,7 +170,7 @@
     "check_scope": "PixelMask was verified through its package and Vector configuration. Tailscale sign-in and peer connectivity are deferred."
   },
   "factory_restore_check": {
-    "checked_at": "2026-11-21T17:01+07:00",
+    "checked_at": "2026-11-21T17:02+07:00",
     "active_slot": "b",
     "flash_locked": false,
     "verified_boot": "orange",
@@ -222,6 +222,14 @@
           "running_build": "CPH2745_17.0.0.102(EX01)",
           "c80_application_and_reboot": "Unverified at this check.",
           "accessibility_node_enabled": true
+        },
+        "local_install_target_screen": {
+          "observed": "2026-11-21T17:02+07:00",
+          "package": "com.oplus.ota",
+          "screen": "ColorOS · OnePlus 15 · Local install",
+          "software_version": "CPH2745_17.0.1.201",
+          "size_as_displayed": "8.66 GB",
+          "available_action": "Install now"
         }
       },
       "os_updater_screen_before_owner_update": {
@@ -273,7 +281,7 @@
         "observed_result": "Install guide displayed. Package application and C.80 boot remain unverified."
       }
     },
-    "restore_progress": "Stock C.75 init_boot_b written. Android boot and absence of KernelSU runtime verified. The C.80 full ZIP was copied from the Mac and verified on the phone. The built-in Local install option is available offline on C.75. C.80 installation, locked green boot, wipe and first welcome screen await verification.",
+    "restore_progress": "Stock C.75 init_boot_b written. Android boot and absence of KernelSU runtime verified. The C.80 full ZIP was copied from the Mac and verified on the phone. The built-in Local install screen recognized the C.80 target and offered Install now. C.80 installation, locked green boot, wipe and first welcome screen await verification.",
     "before_unroot": {
       "partition_comparison": {
         "build": "CPH2745_17.0.0.102(EX01)",
