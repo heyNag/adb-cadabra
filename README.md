@@ -15,10 +15,12 @@ We later unlocked and rooted that same C.80 installation on slot A. The only rem
 | What do you want to do? | Start here |
 |---|---|
 | Root a stock phone, or erase and rebuild a rooted phone | [Clean install or redo](OnePlus%2015%20-%20CPH2745/01-root-and-reinstall/README.md) |
-| Check for or install updates to existing root components | [Read the phone and compare its installed channels](OnePlus%2015%20-%20CPH2745/02-updates/README.md) |
+| Check for or install updates to existing apps and root components | [Read the phone and compare its installed channels](OnePlus%2015%20-%20CPH2745/02-updates/README.md) |
 | Remove root or return to a locked, factory-reset phone | [Restore to stock](OnePlus%2015%20-%20CPH2745/03-restore-to-stock/README.md). Choose the branch that matches the running build. |
 
 ADB communicates with Android after you authorize the Mac over USB. Fastboot communicates with the bootloader. This phone has two firmware slots, A and B. A system update can change which slot boots. Each guide tells you when to switch modes, which values to read, and when the owner needs to press a button. Agents should also read the [repository navigation guide](AGENTS.md).
+
+To repeat the **IMD USB-only test**, leave the cable connected while IMD turns USB debugging off. On the reference phone, tapping **Revert to default** restored wired ADB. The guide covers the stable download, permissions, saved settings and how to verify recovery. [IMD setup and USB test](OnePlus%2015%20-%20CPH2745/01-root-and-reinstall/README.md#imd-usb-debugging-setup)
 
 ## Temporary Mac working folder
 

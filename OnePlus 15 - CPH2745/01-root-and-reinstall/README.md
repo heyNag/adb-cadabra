@@ -83,6 +83,8 @@ Select the official release APK for KernelSU Manager (package `me.weishu.kernels
 
 Use the device overview’s [installed versions, channels and source links](../README.md#verified-setup-on-the-reference-phone) for the seven original root components. The Wi-Fi tools have separate [app installation](#install-wifianalyzer) and [KernelSU module activation](#activate-coloros-wi-fi-sense) steps. **Vector** was the only component installed from canary. Choose its `*-Release.zip` asset. PixelMask 1.2.0 needed Vector’s Android 17 compatibility fix. KernelSU used the official stable Manager. For Tailscaled, select the stable ARM64 integration ZIP and use its engine updater for the official ARM64 Tailscale engine. [PixelMask compatibility notes](https://github.com/kinginu/PixelMask/releases/tag/18-1.2.0)
 
+For the reference phone’s wired debugging controls, complete [IMD USB debugging setup](#imd-usb-debugging-setup) after the KernelSU Shell grant is working.
+
 The verification record’s `clean_rebuild` field identifies the versions and assets used on November 21. The earlier C.75 baseline is recorded separately under `rooted_rebuild_baseline`. [Recorded builds and artifacts](../02-updates/current/verification.json)
 
 ## 2. Select a matching image
@@ -371,6 +373,48 @@ for key in ("state", "threshold", "countdown_seconds", "fluid_installed", "fluid
 ```
 
 After verification, refresh the [shared inventory](../README.md#verified-setup-on-the-reference-phone) and [current verification](../02-updates/current/verification.json) with the running versions, selected release links and digests. Record the verified firmware, patched filename and actual SHA-256. Keep this run’s stock fallback through boot, module activation and verification. When cleaning up the temporary downloads, remove only the selected run directory.
+
+## IMD USB debugging setup
+
+This test turns wired USB debugging off and restores it from the phone while the cable stays connected. Use the private `DOWNLOAD_DIR` from [section 0](#0-set-up-a-fresh-mac-and-phone) and the serial-selected `phone` helper from [section 1](#1-check-the-phone-and-manager). Connect the Indian CPH2745 as the only wired Android device for this test.
+
+1. **Install the official APK.** Select the app-release APK from the latest compatible stable release of `soul-99/SU_IMD`. Use section 1 to download it and verify the release asset SHA-256. With Android SDK Build-Tools, run `aapt2 dump badging "$asset"` and `apksigner verify --print-certs "$asset"`. Require package `com.soul_99.suIMD` (case-sensitive), the selected release version and a valid signature. The November 21 test used v3, version code 17. Run `phone install "$asset"`, complete the OnePlus installer review if shown and require `Success`. For an existing installation, use the in-place update procedure. [Latest stable APK](https://github.com/soul-99/SU_IMD/releases/latest) · [Update IMD](../02-updates/README.md#update-imd)
+2. **Grant settings access to IMD only.** IMD needs `WRITE_SECURE_SETTINGS` to change the debugging flag. On this phone ColorOS rejected the ordinary ADB permission grant. We used the already authorized KernelSU **Shell** for the package-specific grant below. Leave IMD’s own Superuser switch off. IMD v3 also requires `POST_NOTIFICATIONS` during setup so it can offer its Revert notification. Open IMD and allow the Android notification prompt, or enable **Allow notifications** under IMD’s **App info → Notifications**. Check that both permissions report `granted=true`. [Upstream permission descriptions](https://github.com/soul-99/SU_IMD#about-permissions)
+
+   ```sh
+   phone shell "su -c 'pm grant --user 0 com.soul_99.suIMD android.permission.WRITE_SECURE_SETTINGS'"
+   # Run after allowing notifications in IMD.
+   phone shell dumpsys package com.soul_99.suIMD |
+     grep -E 'android\.permission\.(WRITE_SECURE_SETTINGS|POST_NOTIFICATIONS): granted='
+   ```
+
+3. **Save the two lists separately.** In first-run setup, skip Shizuku integration, accessibility and overlay management, and IMD+ automations. Under **Settings to hide / unhide** (also labeled **Default settings to hide**), select **USB debugging only**. Under **Revert to default configuration** (labeled **Settings to unhide on Revert** in some views), select **Developer settings** and **USB debugging**. Leave **Wireless debugging** and all other targets unselected in both lists. Save each page and reopen both under **Settings → Default IMD settings** to check the ticks. The first list chooses what Hide turns off. The second gives the desired state after the explicit Revert. [Tagged settings implementation](https://github.com/soul-99/SU_IMD/blob/v3/feature/settings/src/main/kotlin/com/android/geto/feature/settings/SettingsScreen.kt#L1049-L1074)
+
+4. **Check the wired baseline.** Run the following in the same Terminal. Require `device`, model `CPH2745` and the three settings `1`, `1`, `0` in the order shown. Keep the serial private.
+
+   ```sh
+   imd_usb_state() {
+     test "$(adb -d get-serialno)" = "$PHONE_SERIAL" &&
+       phone get-state &&
+       phone shell 'getprop ro.product.model
+         settings get global development_settings_enabled
+         settings get global adb_enabled
+         settings get global adb_wifi_enabled'
+   }
+   imd_usb_state
+   IMD_TEST_START=$(phone shell "date '+%m-%d %H:%M:%S.000'")
+   ```
+
+5. **Exercise both buttons on the phone.** Open **Settings manager** from IMD’s main screen. With the cable still connected, tap **Hide settings**. Confirm the USB row switches off and the wired handset disappears from `adb devices -l`. Once the Mac sees the disconnect, ask the person holding the phone to **short-press Revert to default**, the lower-right button above **Close**. Keep the cable in place. If Android asks to authorize the Mac again, tap **Allow**. On the Mac, rerun `adb devices -l` and `imd_usb_state`. Require the same USB serial, model and `1 / 1 / 0` baseline. ADB may assign a new `transport_id` when the wired connection returns. If it stays disconnected, check **USB debugging** directly in Android’s **Developer options** and record how it was restored. [Manager button handlers](https://github.com/soul-99/SU_IMD/blob/v3/feature/apps/src/main/kotlin/com/android/geto/feature/apps/dialog/AndroidSettingsManagerDialog.kt#L1267-L1303) · [Android USB debugging](https://developer.android.com/tools/adb#Enabling)
+
+6. **Verify the transition after reconnection.** On the tested ColorOS build, Android retained the USB debugging events while the Mac was offline. Run this in the same Terminal to print just the event times and values. Look for `false` followed by `true` during the test. If another build omits those log lines, record the observed USB disconnect, the same-device ADB shell result and the before/after flags separately.
+
+   ```sh
+   phone logcat -d -v threadtime -T "$IMD_TEST_START" -s AdbService:D |
+     awk '/adbChange shouldEnable: (false|true)/ { print $1, $2, $NF }'
+   ```
+
+On the reference CPH2745, Android recorded USB debugging off at 22:25:41 and on at 22:25:56 Bangkok time on November 21, 2026. The Mac verified the same handset over wired ADB at 22:25:58, with the cable connected throughout. [Current verification](../02-updates/current/verification.json)
 
 ## Background on other unlock methods
 
