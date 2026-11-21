@@ -10,7 +10,7 @@
 
 ## Installed on your OnePlus 15
 
-The phone boots Android 17, `CPH2745_17.0.0.102(EX01)`, on slot B with the official C.75 `init_boot`. Shell has no `su` command and KernelSU is absent from the loaded modules. The bootloader is unlocked and Verified Boot is orange. User data and the prior app installation have not been erased. [Restore measurements and current state](02-updates/current/verification.json)
+The phone boots Android 17, `CPH2745_17.0.1.201(EX01)`, on slot A. The AVB digest matches the signed India C.80 archive and the update engine confirmed the snapshot merge completed. Shell has no `su` command and KernelSU is absent from the loaded modules. The bootloader is unlocked and Verified Boot is orange. User data and the prior app installation have not been erased. [Restore measurements and current state](02-updates/current/verification.json)
 
 ### Recorded rooted components
 
@@ -36,7 +36,7 @@ After a check, replace the timestamp and [verification record](02-updates/curren
 
 **To get the latest full firmware**, open **Settings → About device → Software update**, read the build offered for this phone, then select **OnePlus 15 → India → Full** in the firmware index. Use the phone only to read the offered build. Download the ZIP on the Mac from the OnePlus/OPlus distribution link located by the index. Resolve a fresh link each time. [Latest India full-package metadata](https://oosdownloader-gui.fly.dev/api/oneplus/oneplus_15/IN/full/info) · [Download and verification instructions](03-restore-to-stock/README.md#get-the-latest-full-indian-firmware)
 
-**Last firmware check, November 21, 2026.** The phone runs `CPH2745_17.0.0.102(EX01)` (C.75). Its updater offered `CPH2745_17.0.1.201` (C.80) as a 2.17 GB update. The full India ZIP is 9,301,191,889 bytes. Its signature matched a trusted OTA key on the phone. It carries complete images for 65 target partitions and declares a partial partition set. A full factory service image and relock procedure remain unverified. Both releases were available from the manufacturer's CDN with freshly resolved links. A stock image used to undo the existing root patch must match the firmware currently running. [Recorded C.75 identity](01-root-and-reinstall/kit/firmware-identification.json) · [Exact-build extraction](01-root-and-reinstall/README.md#2-select-a-matching-image)
+**Last firmware check, November 21, 2026.** The built-in local installer updated this phone from C.75 on slot B to C.80 on slot A. The full India ZIP is 9,301,191,889 bytes. Its signature matched a trusted OTA key on the phone. It carries complete images for 65 target partitions and declares a partial partition set. A full factory service image and relock procedure remain unverified. Both releases were available from the manufacturer's CDN with freshly resolved links. The C.75 stock and patched boot images belong to the previous build. For a later C.80 reroot, extract the C.80 stock `init_boot` from its authenticated India OTA and generate a fresh patch for the verified active slot. [Recorded C.75 identity](01-root-and-reinstall/kit/firmware-identification.json) · [Exact-build extraction](01-root-and-reinstall/README.md#2-select-a-matching-image)
 
 **To recreate the rooted setup**, use each project’s **Latest on this channel** link for its APK, module ZIP or engine. The installed-source column identifies the build to select if you need to reproduce a particular version. Use one [temporary Mac working folder](../README.md#temporary-mac-working-folder) for the entire operation.
 

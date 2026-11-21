@@ -2,21 +2,23 @@
   "device": {
     "ro.product.model": "CPH2745",
     "ro.build.version.release": "17",
-    "ro.build.display.id": "CPH2745_17.0.0.102(EX01)",
-    "ro.build.fingerprint": "OnePlus/CPH2745IN/OP611FL1:17/CP2A.260605.016/B.R4T3.55357f5-2eb9868-2eda512:user/release-keys",
-    "ro.boot.slot_suffix": "_b",
+    "ro.build.display.id": "CPH2745_17.0.1.201(EX01)",
+    "ro.build.fingerprint": "OnePlus/CPH2745IN/OP611FL1:17/CP2A.260605.016/B.R4T3.50a3663-29f0eba-29fce1c:user/release-keys",
+    "ro.boot.slot_suffix": "_a",
     "ro.boot.flash.locked": "0",
     "sys.boot_completed": "1",
     "ro.boot.vbmeta.device_state": "unlocked",
     "ro.boot.verifiedbootstate": "orange",
-    "ro.boot.veritymode": "enforcing"
+    "ro.boot.veritymode": "enforcing",
+    "ro.build.version.security_patch": "2026-11-01",
+    "ro.boot.vbmeta.digest": "b3a36735edddc817c5e7c14a05f2bda6935ab3c7d92b56632251ccb78f65b2c3"
   },
-  "kernel": "6.12.69-android16-6-g242e1a07f878-ab15865446-4k",
+  "kernel": "6.12.69-android16-6-g5fd39602326e-ab16372235-4k",
   "selinux": "Enforcing",
-  "root": "Shell UID 2000. su -c id returned 127, inaccessible or not found.",
+  "root": "su -c id returned 127. No kernelsu entry in /proc/modules.",
   "kernelsu_lkm_loaded": false,
-  "boot_id": "fed9beb2-558c-4ce5-9e28-8057aa83abdd",
-  "checked_at": "2026-11-21T16:36:35+07:00",
+  "boot_id": "7ae310df-901b-42a9-866d-ae1c355132fa",
+  "checked_at": "2026-11-21T17:15:17+07:00",
   "rooted_rebuild_baseline": {
     "root": "uid=0(root) gid=0(root) groups=0(root) context=u:r:ksu:s0",
     "kernelsu_lkm_loaded": true,
@@ -170,12 +172,10 @@
     "check_scope": "PixelMask was verified through its package and Vector configuration. Tailscale sign-in and peer connectivity are deferred."
   },
   "factory_restore_check": {
-    "checked_at": "2026-11-21T17:02+07:00",
-    "active_slot": "b",
+    "checked_at": "2026-11-21T17:15:17+07:00",
+    "active_slot": "a",
     "flash_locked": false,
     "verified_boot": "orange",
-    "active_init_boot_matches": "C.75 stock image sent and written OKAY in bootloader fastboot. Raw post-flash readback unavailable in unrooted Android.",
-    "current_build_stock_init_boot_recovered_from_official_ota": true,
     "latest_india_full_ota": {
       "display_build": "CPH2745_17.0.1.201(EX01)",
       "ota_id": "CPH2745_11.C.80_1800_202610290517",
@@ -203,6 +203,12 @@
         "range_total_matches_package_bytes": true,
         "basename_matches_os_updater": true,
         "local_zip_md5_matches_index_and_os_updater": true
+      },
+      "expected_avb_chain_digest_sha256": "b3a36735edddc817c5e7c14a05f2bda6935ab3c7d92b56632251ccb78f65b2c3",
+      "stock_init_boot": {
+        "bytes": 8388608,
+        "sha256": "cf870b50cf44845c5e9070afe7a13188aa5a13efc1bc7cddb42f49f217074420",
+        "mac_image_matches_authenticated_target": true
       }
     },
     "phone_updater_offered": {
@@ -278,10 +284,10 @@
           "System recovery (non-A/B devices only)."
         ],
         "applicable_option": "Option 1 for the Indian CPH2745 with A/B slots.",
-        "observed_result": "Install guide displayed. Package application and C.80 boot remain unverified."
+        "observed_result": "Install guide displayed before package selection."
       }
     },
-    "restore_progress": "Stock C.75 init_boot_b written. Android boot and absence of KernelSU runtime verified. The C.80 full ZIP was copied from the Mac and verified on the phone. The built-in Local install screen recognized the C.80 target and offered Install now. C.80 installation, locked green boot, wipe and first welcome screen await verification.",
+    "restore_progress": "The Indian C.80 local update installed and booted on slot A. Its AVB digest matches the signed C.80 archive. Virtual A/B merge completed. The bootloader is unlocked and user data remains. The final relock, wipe, green Verified Boot and first welcome screen are pending.",
     "before_unroot": {
       "partition_comparison": {
         "build": "CPH2745_17.0.0.102(EX01)",
@@ -350,7 +356,34 @@
       "vbmeta_digest": "4f37f0cf8d94f052f2096c45c3e08c03e12b010d1c1ca7918b7a1bd45b4ef1b9",
       "kernelsu_module_in_proc_modules": false,
       "su_exit_code": 127,
-      "user_data_erased": false
+      "user_data_erased": false,
+      "boot_id": "fed9beb2-558c-4ce5-9e28-8057aa83abdd",
+      "whole_archive_sha256": "645afc94fa6f31ac2bd62a172d95f883edbc5d0819001a97d33406683ed62a75",
+      "whole_archive_cms_verified_against_device_trust_store": true,
+      "stock_avb_digest_matches_live": true,
+      "ro.boot.vbmeta.avb_version": "1.3",
+      "stock_init_boot_recovered_from_official_ota": true,
+      "flash_check": "C.75 stock image sent and written OKAY in bootloader fastboot. Raw post-flash readback unavailable in unrooted Android."
+    },
+    "c80_local_install": {
+      "owner_action": "Selected Install now. The native installer showed Installing… 0.0% at 17:02.",
+      "filesystem_verification": "update_engine returned kSuccess at 17:13.",
+      "postinstall": "All post-install commands succeeded.",
+      "restart": "Owner selected Restart. The orange unlocked-boot warning appeared.",
+      "boot_result": "Android returned on slot A with the C.80 India fingerprint and sys.boot_completed=1.",
+      "avb_digest_matches_official_archive": true,
+      "kernel_su_absent_from_proc_modules": true,
+      "su_exit_code": 127,
+      "merge_completed_at": "2026-11-21T17:15:17+07:00",
+      "update_engine_merge_result": "Merge finished with state MergeCompleted",
+      "bootloader_state": "unlocked",
+      "verified_boot": "orange",
+      "user_data_erased": false,
+      "boot_animation": "stopped",
+      "user_0_credential_encrypted_storage_available": true,
+      "keyguard_showing": false,
+      "slot_a_marked_successful": "No independent postboot Boot Control HAL reading from unprivileged ADB.",
+      "wifi_on": 0
     }
   }
 }
