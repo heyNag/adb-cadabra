@@ -83,7 +83,7 @@ Select the official release APK for KernelSU Manager (package `me.weishu.kernels
 
 Use the device overview’s [installed versions, channels and source links](../README.md#verified-setup-on-the-reference-phone) for the seven original root components. The Wi-Fi tools have separate [app installation](#install-wifianalyzer) and [KernelSU module activation](#activate-coloros-wi-fi-sense) steps. **Vector** was the only component installed from canary. Choose its `*-Release.zip` asset. PixelMask 1.2.0 needed Vector’s Android 17 compatibility fix. KernelSU used the official stable Manager. For Tailscaled, select the stable ARM64 integration ZIP and use its engine updater for the official ARM64 Tailscale engine. [PixelMask compatibility notes](https://github.com/kinginu/PixelMask/releases/tag/18-1.2.0)
 
-For the reference phone’s wired debugging controls, complete [IMD USB debugging setup](#imd-usb-debugging-setup) after the KernelSU Shell grant is working.
+For the reference phone’s wired debugging controls, complete [IMD USB debugging setup](#imd-usb-debugging-setup) after the KernelSU Shell grant is working. The [four standalone apps](#install-oxygen-updater-shizuku-ashell-you-and-essentials) have separate install channels and verification steps.
 
 The verification record’s `clean_rebuild` field identifies the versions and assets used on November 21. The earlier C.75 baseline is recorded separately under `rooted_rebuild_baseline`. [Recorded builds and artifacts](../02-updates/current/verification.json)
 
@@ -415,6 +415,19 @@ This test turns wired USB debugging off and restores it from the phone while the
    ```
 
 On the reference CPH2745, Android recorded USB debugging off at 22:25:41 and on at 22:25:56 Bangkok time on November 21, 2026. The Mac verified the same handset over wired ADB at 22:25:58, with the cable connected throughout. [Current verification](../02-updates/current/verification.json)
+
+## Install Oxygen Updater, Shizuku, aShell You and Essentials
+
+| App and package | Install source | What the reference test established |
+|---|---|---|
+| OS Updater (Oxygen Updater), `com.arjanvlek.oxygenupdater` | Open its [Google Play listing](https://play.google.com/store/apps/details?id=com.arjanvlek.oxygenupdater) on the phone and choose **Install**. | During the factory workflow, OS Updater identified the Indian C.80 full package. The phone’s built-in **Local install** installed the firmware. [Recorded firmware check](../03-restore-to-stock/README.md#select-and-install-the-verified-zip) |
+| Shizuku (thedjchi fork), `moe.shizuku.privileged.api` | Select the fork’s APK from the [latest stable release](https://github.com/thedjchi/Shizuku/releases/latest). | The manager opened. ColorOS denied the USB ADB shell a runtime-permission grant, and the manager reported **Shizuku is not running**. Privileged client access remains unverified. |
+| aShell You, `in.hridayan.ashell` | Select the **GitHub** APK (`*-github-release.apk`) from the [latest stable release](https://github.com/DP-Hridayan/aShellYou/releases/latest). | The app opened. Privileged command execution remains untested. |
+| Essentials, `com.sameerasw.essentials` | Select the release APK from the [latest stable release](https://github.com/sameerasw/essentials/releases/latest). | Launch reached an Android first-run permission prompt. Individual customizations remain untested. |
+
+For the three GitHub APKs, use section 1’s private download directory and release-asset SHA-256 check. For each file, run `aapt2 dump badging "$asset"` and `apksigner verify --print-certs "$asset"`. Match the package in the table and the selected release version, then run `phone install "$asset"` on a clean install. The original Shizuku and the thedjchi fork share a package ID and use different signing keys. If Shizuku is already installed, identify its build and signer before choosing an update path. [Update these apps](../02-updates/README.md#update-oxygen-updater-shizuku-ashell-you-and-essentials)
+
+After installation, set `PACKAGE` to each package in the table. Run `phone shell pm path --user 0 "$PACKAGE"` and `phone shell dumpsys package "$PACKAGE" | grep -E 'version(Name|Code)='`. Record the installed version separately from each launch or feature check. [Reference versions, channels and tested releases](../README.md#verified-setup-on-the-reference-phone)
 
 ## Background on other unlock methods
 

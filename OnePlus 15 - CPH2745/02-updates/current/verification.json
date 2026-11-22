@@ -41,6 +41,22 @@
       "com.soul_99.suIMD": {
         "version": "3",
         "versionCode": 17
+      },
+      "com.arjanvlek.oxygenupdater": {
+        "version": "7.1.0",
+        "versionCode": 135
+      },
+      "moe.shizuku.privileged.api": {
+        "version": "13.7.0-thedjchi",
+        "versionCode": 1361
+      },
+      "in.hridayan.ashell": {
+        "version": "v8.0.0",
+        "versionCode": 63
+      },
+      "com.sameerasw.essentials": {
+        "version": "21.3",
+        "versionCode": 75
       }
     },
     "modules": [
@@ -159,11 +175,62 @@
     },
     "optional_apps": {
       "com.arjanvlek.oxygenupdater": {
-        "name": "OS Updater",
+        "name": "OS Updater (Oxygen Updater)",
         "user_id": 0,
-        "installed": false,
-        "checked_on": "2026-11-21",
-        "check": "ADB pm list packages --user 0 com.arjanvlek.oxygenupdater returned no package."
+        "installed": true,
+        "checked_at": "2026-11-22T09:58:19+07:00",
+        "channel": "Google Play",
+        "installer_package": "com.android.vending",
+        "source": "https://play.google.com/store/apps/details?id=com.arjanvlek.oxygenupdater",
+        "latest": "https://play.google.com/store/apps/details?id=com.arjanvlek.oxygenupdater",
+        "verification": "ADB confirmed the installed version, version code and Google Play installer for user 0.",
+        "play_listing_check": "On November 22 the listing on this phone showed Open and Uninstall. Google Play offered no update.",
+        "firmware_check": "During the November 21 C.80 restore, OS Updater identified the full Indian firmware package. The OnePlus system updater performed the Local install."
+      },
+      "moe.shizuku.privileged.api": {
+        "name": "Shizuku (thedjchi fork)",
+        "user_id": 0,
+        "installed": true,
+        "checked_at": "2026-11-22T09:58:19+07:00",
+        "channel": "Stable GitHub APK",
+        "source": "https://github.com/thedjchi/Shizuku/releases/tag/v13.7.0-thedjchi",
+        "latest": "https://github.com/thedjchi/Shizuku/releases/latest",
+        "asset": "shizuku-v13.7.0-thedjchi.apk",
+        "sha256": "6ea6dee65d5ddc626b6b75b2c2f67f8cc547fa47d7b437e6892639c37eaffe43",
+        "signer_sha256": "947e81ed49d6cde4006bd64b94ab69e63f50074ce01451d1bf30acb14e591f37",
+        "installed_base_apk_matches_latest_release_asset": true,
+        "launch_checked_on": "2026-11-21",
+        "launch_result": "The manager opened. After USB ADB startup on C.80, it reported “Shizuku is not running”. Privileged client operation remains unverified."
+      },
+      "in.hridayan.ashell": {
+        "name": "aShell You",
+        "user_id": 0,
+        "installed": true,
+        "checked_at": "2026-11-22T09:58:19+07:00",
+        "channel": "Stable GitHub APK",
+        "source": "https://github.com/DP-Hridayan/aShellYou/releases/tag/v8.0.0",
+        "latest": "https://github.com/DP-Hridayan/aShellYou/releases/latest",
+        "asset": "aShellYou-v8.0.0-github-release.apk",
+        "sha256": "5d61d4f90444527e9a49f5288edd0af5a3d8395b0f472bfb3d063dddf4f25435",
+        "signer_sha256": "dc4217203a7284bd159d7b863b7990620069c7929d6f5a51f59a321e77f18d4c",
+        "installed_base_apk_matches_latest_release_asset": true,
+        "launch_checked_on": "2026-11-21",
+        "launch_result": "The app opened. Privileged command execution remains unverified."
+      },
+      "com.sameerasw.essentials": {
+        "name": "Essentials",
+        "user_id": 0,
+        "installed": true,
+        "checked_at": "2026-11-22T09:58:19+07:00",
+        "channel": "Stable GitHub APK",
+        "source": "https://github.com/sameerasw/essentials/releases/tag/v21.3",
+        "latest": "https://github.com/sameerasw/essentials/releases/latest",
+        "asset": "app-release.apk",
+        "sha256": "eb2731e9c8bc75495a4ed811f3d44a061b242237a785dcfadf14a4f9ff463755",
+        "signer_sha256": "85aa83a986206e5ba82d2f765c27cb1d14eb754b2150476fa4282aa15a0a1cea",
+        "installed_base_apk_matches_latest_release_asset": true,
+        "launch_checked_on": "2026-11-21",
+        "launch_result": "Launching the app reached an Android first-run permission prompt. Feature behavior on ColorOS remains unverified."
       }
     },
     "wifi_tools": {

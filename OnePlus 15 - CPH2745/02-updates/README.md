@@ -1,6 +1,6 @@
 # Update installed OnePlus 15 components
 
-Update each component already on the phone to the latest compatible release on its installed channel. The live inventory determines the scope. Skip absent components. On a stock phone, skip the KernelSU checks. WiFiAnalyzer and IMD can be inventoried and updated as standalone Android apps. To install for the first time on a clean slate, use the [clean-slate installation guide](../01-root-and-reinstall/README.md).
+Update each component already on the phone to the latest compatible release on its installed channel. The live inventory determines the scope. Skip absent components. On a stock phone, skip the KernelSU checks. The standalone Android apps can be inventoried and updated independently of KernelSU. To install for the first time on a clean slate, use the [clean-slate installation guide](../01-root-and-reinstall/README.md).
 
 Use the top-level `device` and `current_state` fields for the last recorded checks on the reference phone. `rooted_rebuild_baseline` and `factory_restore_check` record earlier states. At every update check, open **Latest on this channel** for each installed component and compare the live upstream release with the running version. For a version check, keep Google Photos closed. To verify PixelMask inside Photos after an update, use the [runtime check](../01-root-and-reinstall/README.md#restore-and-verify-the-pixelmask-scope) with the existing scope. Preserve the current backup preference, Tailscale sign-in and settings. [Current verification](current/verification.json) · [Component channels and official downloads](../README.md#verified-setup-on-the-reference-phone)
 
@@ -33,6 +33,9 @@ phone shell pm path me.weishu.kernelsu
 phone shell pm path com.kinginu.pixelmask
 phone shell pm path --user 0 com.vrem.wifianalyzer
 phone shell pm path --user 0 com.soul_99.suIMD
+for app in com.arjanvlek.oxygenupdater moe.shizuku.privileged.api in.hridayan.ashell com.sameerasw.essentials; do
+  phone shell pm list packages -i --user 0 "$app"
+done
 ```
 
 For an established KernelSU setup, confirm **Working / LKM** and check the already-authorized Shell root grant. A denied Shell grant alone leaves root status uncertain. Once root is confirmed, inventory KernelSU modules and their enabled or pending-removal states.
@@ -52,6 +55,10 @@ phone shell dumpsys package me.weishu.kernelsu | grep -E 'version(Name|Code)='
 phone shell dumpsys package com.kinginu.pixelmask | grep -E 'version(Name|Code)='
 phone shell dumpsys package com.vrem.wifianalyzer | grep -E 'version(Name|Code)='
 phone shell dumpsys package com.soul_99.suIMD | grep -E 'version(Name|Code)='
+for app in com.arjanvlek.oxygenupdater moe.shizuku.privileged.api in.hridayan.ashell com.sameerasw.essentials; do
+  printf '%s\n' "$app"
+  phone shell dumpsys package "$app" | grep -E 'version(Name|Code)='
+done
 vector status
 vector modules ls
 vector scope ls com.kinginu.pixelmask
@@ -80,6 +87,10 @@ Keep the firmware, active slot, boot ID, enabled modules and applicable configur
 | PixelMask | Open the [latest stable release](https://github.com/kinginu/PixelMask/releases/latest). Compare the APK version code and its required Vector build for Android 17. |
 | WiFiAnalyzer | On the reference phone, check VREM’s stable GitHub APK. For a store installation, use its original store. [VREM stable APK](https://github.com/VREMSoftwareDevelopment/WiFiAnalyzer/releases/latest) · [Google Play](https://play.google.com/store/apps/details?id=com.vrem.wifianalyzer) · [F-Droid](https://f-droid.org/en/packages/com.vrem.wifianalyzer/) |
 | IMD (It's My Device) | Select the newest compatible standalone APK on the author’s stable channel. Compare its version code with the installed `com.soul_99.suIMD` package. [Latest stable IMD release](https://github.com/soul-99/SU_IMD/releases/latest) |
+| OS Updater (Oxygen Updater) | Check the [Google Play listing](https://play.google.com/store/apps/details?id=com.arjanvlek.oxygenupdater) on the reference phone for the release offered to that device. |
+| Shizuku (thedjchi fork) | Compare the manager APK with the [fork’s latest stable release](https://github.com/thedjchi/Shizuku/releases/latest). The original upstream manager uses the same package ID with a different signer. |
+| aShell You | Select the `*-github-release.apk` build from the [latest stable release](https://github.com/DP-Hridayan/aShellYou/releases/latest). The publisher also offers an F-Droid build. |
+| Essentials | Select the release APK from the [latest stable release](https://github.com/sameerasw/essentials/releases/latest). |
 | ColorOS Wi-Fi Sense | Compare the installed `coloros_wifi_sense` version code with the [author’s latest stable ZIP](https://github.com/mazemingw/coloros-wifi-sense/releases/latest). |
 
 Check Android, kernel, ABI and dependency requirements. A version check needs only the release metadata and phone inventory. For a phone-only check, report the result and check time in chat, including any feed or live check that was unavailable. When the owner asks to document the check, also update the device inventory and current verification record. Finish a check-only request after reporting the live counts of installed components checked, already current, and eligible for update. Record any incompatible newer release or unresolved check separately. For an update request, proceed only with installed components that have a newer compatible release on their existing channel.
@@ -96,7 +107,7 @@ mkdir -p "$RUN_BASE" &&
   printf '%s\n' "$UPDATE_DIR"
 ```
 
-Keep `UPDATE_DIR` for this update’s installers, settings exports and rollback files. Compare the downloaded size and local SHA-256 (`shasum -a 256 FILE`) with the published metadata. Verify any upstream signed checksum. For a ZIP, use `unzip -tq FILE`, inspect the installer, read its ID and version code with `unzip -p FILE module.prop`, and validate its bundled checksum manifest when present. For APKs, use the following identity check for each update. Set `PACKAGE` to the intended installed package (`me.weishu.kernelsu`, `com.kinginu.pixelmask`, `com.vrem.wifianalyzer` or `com.soul_99.suIMD`) and `APK` to the absolute path of the checksum-verified candidate. The installed base APK supplies the signing certificate for comparison.
+Keep `UPDATE_DIR` for this update’s installers, settings exports and rollback files. Compare the downloaded size and local SHA-256 (`shasum -a 256 FILE`) with the published metadata. Verify any upstream signed checksum. For a ZIP, use `unzip -tq FILE`, inspect the installer, read its ID and version code with `unzip -p FILE module.prop`, and validate its bundled checksum manifest when present. For APKs, use the following identity check for each update. Set `PACKAGE` to the installed package for that GitHub APK from section 1 and `APK` to the absolute path of the checksum-verified candidate. The installed base APK supplies the signing certificate for comparison.
 
 ```sh
 set -o pipefail
@@ -182,6 +193,12 @@ When the hashes match, run `rootcmd "/data/adb/ksud module install $PHONE_ZIP"` 
 phone shell dumpsys package com.soul_99.suIMD |
   grep -E 'version(Name|Code)=|User [0-9]+:|android[.]permission[.](WRITE_SECURE_SETTINGS|POST_NOTIFICATIONS): granted='
 ```
+
+### Update Oxygen Updater, Shizuku, aShell You and Essentials
+
+- **OS Updater.** Use **Update** when Google Play offers a newer build on this phone. Repeat section 1’s package, installer and version checks. Updating the app is independent of downloading or installing firmware.
+- **Shizuku, aShell You and Essentials.** Keep each GitHub channel and asset flavor from section 2. For each newer compatible APK, complete section 3’s digest, package ID and signer checks, then update in place with `phone install -r "$APK"`. Read back the new version and preserve existing app data and grants.
+- **Runtime readback.** Open the updated app and report the screen reached. For Shizuku, record the manager’s service status separately from its APK version. For aShell You and Essentials, report a privileged command or customization as working only after that particular operation succeeds. [Recorded launch results](../01-root-and-reinstall/README.md#install-oxygen-updater-shizuku-ashell-you-and-essentials)
 
 ### Recover a failed update
 
